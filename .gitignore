@@ -9,6 +9,7 @@ node_modules/
 package.json
 webpack.config.js
 .babelrc
+api_keys.js
 
 !2_Snippety/1_Konfiguracja_srodowiska/.babelrc
 !2_Snippety/1_Konfiguracja_srodowiska/package.json
@@ -150,3 +151,4 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
