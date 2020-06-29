@@ -1,6 +1,7 @@
 import {OpenWeatherMap} from './open-weather.js'
 
 //MAIN WEATHER MODULE
+const weatherModule = document.querySelector('.module__weather');
 const $cityName = document.querySelector('.city__name');
 const $pressure = document.querySelector('.pressure__value');
 const $humidity = document.querySelector('.humidity__value');
@@ -20,20 +21,20 @@ const $daysContent = document.querySelectorAll('.day-content');
                 getWeekForecast(lat, long)
             });
         }
-        showWeatherContent();
     } catch (error) {
         console.error(error);
     }
 })();
 
+showWeatherContent();
+
 function showWeatherContent() {
-    const weatherModule = document.querySelector('.module__weather');
     let isHidden = weatherModule.hasAttribute('hidden');
     if (isHidden) weatherModule.removeAttribute('hidden');
 }
 
-const btnAddWeatherModule = document.querySelector('#add-city');
-btnAddWeatherModule.addEventListener('click', function() {
+const btnShowForm = document.querySelector('#add-city');
+btnShowForm.addEventListener('click', function() {
     const addForm = document.querySelector('.module__form');
     let isHidden = addForm.hasAttribute('hidden');
     if (isHidden) addForm.removeAttribute('hidden');
@@ -206,5 +207,28 @@ function formattDateWithHour(date, hour) {
 
 // https://openweathermap.org/weather-conditions
 
+
+//ADDING THE NEW MODULE
+function getWeatherByCityName(cityName) {
+    weather.getWeekForecastByCityName(cityName, (weatherForecastList, error)=> {
+        if (error) {
+            console.error(error);
+        } else {
+            let newModule = weatherModule.cloneNode(true);
+            document.querySelector('#app').appendChild(newModule);
+            let arr = getDayWeatherArray(weatherForecastList);
+            setWeatherModule(arr);
+        }
+    })
+}
+
+const form = document.querySelector('.find-city');
+form.addEventListener('submit', function() {
+    event.preventDefault();
+
+    let city = document.querySelector('#search');
+    console.log(city.value);
+    getWeatherByCityName(city.value);
+})
 
 // weatherModule.cloneNode(true);
