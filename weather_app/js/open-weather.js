@@ -44,7 +44,7 @@ OpenWeatherMap.prototype.getWeekForecastByGeoCoordinates = function(latitude, lo
 										.then((data, err)=>sendResponse(data, err, callback));
 };
 
-OpenWeatherMap.prototype.getWeekForecastByGeoCoordinates = function(cityName, callback) {
+OpenWeatherMap.prototype.getWeekForecastByCityName = function(cityName, callback) {
 	const requestURL = `api.openweathermap.org/data/2.5/forecast?q=${cityName}&
 	exclude=hourly,daily&appid=${OW_API_KEY}&units=metric&lang=pl`;
 	return fetch(herokuCORS+requestURL).then(resp=>resp.json())
