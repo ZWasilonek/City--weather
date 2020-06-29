@@ -76,7 +76,6 @@ function setForcastForNextDays(weatherDaysArray) {
             item.querySelector('.day').innerHTML = weatherDaysArray[i].day;
             item.querySelector('img').src = weatherDaysArray[i].icon;
             item.querySelector('.temperature__value').innerHTML = weatherDaysArray[i].temp
-            console.log(item)
         }
     }
     setDOMItem($daysContent);
