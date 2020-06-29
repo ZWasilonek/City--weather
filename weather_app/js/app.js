@@ -1,7 +1,6 @@
 import {OpenWeatherMap} from './open-weather.js'
 
-const weatherInfo = document.getElementsByClassName('weather__info');
-const weatherCity = document.querySelector('.city');
+//MAIN WEATHER MODULE
 const $cityName = document.querySelector('.city__name');
 const $pressure = document.querySelector('.pressure__value');
 const $humidity = document.querySelector('.humidity__value');
@@ -9,55 +8,23 @@ const $windSpeed = document.querySelector('.wind-speed__value');
 const $temperature = document.querySelector('.temperature__value');
 const $weatherIcon = document.querySelector('.weather__icon').firstChild;
 
-const herokuCORS = 'https://cors-anywhere.herokuapp.com/';
-const ipApi = 'http://ip-api.com/json/';
-
-class IPinfo {
-    constructor(){
-        this.city;
-        this.lat;
-        this.lon;
-    }
-}
-// class IPinfo {
-//     constructor(){
-//         this.fetchIP();
-//         this.city;
-//         this.lat;
-//         this.lon;
-//     }
-//     async fetchIP() {
-//         const resp = await (await fetch(herokuCORS+ipApi)).json();
-//         this.city = resp.city;
-//         this.lat = resp.lat;
-//         this.lon = resp.lon;
-//     }
-//     async VisitorInter() {
-//         const ip = await this.ipPromise;  // this could potentially hang forever if ipgeolocation.io doesn't feel like answering
-//         console.log(ip);
-//     }
-//     getCity() {
-//         console.log('city form obj',this.city)
-//         return this.city
-//     };
-// }
+//FORECAST WEATHER MODULE SECTION
+const $daysContent = document.querySelectorAll('.day-content');
 
 (async () => {
-    // let currentIPInfo;
     try {
-        let ip = await (await fetch(herokuCORS+ipApi)).json();
-        console.log('ip', ip);
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position)=>{
+                const lat  = position.coords.latitude;
+                const long = position.coords.longitude;
+                getWeekForecast(lat, long)
+            });
+        }
         showWeatherContent();
-        getCurrentWeather(ip.city); 
-
-        // currentIPInfo = new IPinfo(ip.city, ip.lat, ip.lon);
-        // console.log('currentIPInfo', currentIPInfo)
     } catch (error) {
         console.error(error);
     }
-    // return currentIPInfo;
 })();
-
 
 function showWeatherContent() {
     const weatherModule = document.querySelector('.module__weather');
@@ -75,55 +42,170 @@ btnAddWeatherModule.addEventListener('click', function() {
 
 let weather = new OpenWeatherMap();
 
-function getCurrentWeather(city) {
-    weather.getCurrentWeatherByCityName(city,(currentWeather, err)=>{
+function getWeekForecast(lat, lon) {
+    weather.getWeekForecastByGeoCoordinates(lat, lon, (weekWeather, err)=>{
         if(err){
-            console.log(err);
-        }
-        else{
-            console.log('currentWeather', currentWeather)
-            let {pressure} = currentWeather.main;
-            let {humidity} = currentWeather.main;
-            let {speed} = currentWeather.wind;
-            let {temp} = currentWeather.main;
-            let {id} = currentWeather.weather[0];
-            console.log(id);
-            setWeatherModule(currentWeather.name, pressure, humidity, speed, Math.floor(temp), 300);
+            console.error(err);
+        }else{
+            // setCurrentWeather(weekWeather);
+            let arr = getDayWeatherArray(weekWeather);
+            setWeatherModule(arr);
         }
     })
 }
 
-function setWeatherModule(city, pressure, humidity, speed, temp, iconId) {
-    $cityName.innerHTML = city;
-    $pressure.innerHTML = pressure;
-    $humidity.innerHTML = humidity;
-    $windSpeed.innerHTML = speed;
-    $temperature.innerHTML = temp;
-    setIcon(iconId);
-
-    // latitude.innerHTML = latitude;
-    // longitude.innerHTML = longitude;
+function setWeatherModule(weatherDaysArray) {
+    setMainWeatherModule(weatherDaysArray[0]);
+    let [ ,...restDays] = weatherDaysArray; 
+    setForcastForNextDays(restDays);
 }
 
-function setIcon(iconId) {
-    let id = String(iconId);
-    const dirIcon = 'images/icons';
-    if (id.startsWith('2')) {
-        $weatherIcon['src'] = `${dirIcon}/thunderstorm.svg`;
-    } else if (id.startsWith('3')) {
-        if (id === '300') {
-            $weatherIcon['src'] = `${dirIcon}/rain-4.svg`;
+function setMainWeatherModule(currentDayWeather) {
+    $cityName.innerHTML = currentDayWeather.city;
+    $pressure.innerHTML = currentDayWeather.pressure;
+    $humidity.innerHTML = currentDayWeather.humidity;
+    $windSpeed.innerHTML = currentDayWeather.windSpeed;
+    $temperature.innerHTML = currentDayWeather.temp;
+    $weatherIcon.src = currentDayWeather.icon;
+}
+
+function setForcastForNextDays(weatherDaysArray) {
+    function setDOMItem(items) {
+        for (let i=0; i<items.length; i++) {
+            let item = items[i];
+            item.querySelector('.day').innerHTML = weatherDaysArray[i].day;
+            item.querySelector('img').src = weatherDaysArray[i].icon;
+            item.querySelector('.temperature__value').innerHTML = weatherDaysArray[i].temp
+            console.log(item)
         }
-        // $weatherIcon['src'] = `${dirIcon}/rain.svg`;
-    } else if (id.startsWith('5')) {
-        if (id >= '500' && id <= '504') {
-            $weatherIcon['src'] = `${dirIcon}/snowy-1.svg`
-        } else if (id === '511') {
-            $weatherIcon['src'] = `${dirIcon}/snowy-1.svg`
+    }
+    setDOMItem($daysContent);
+}
+
+function getDayWeatherArray(weatherForecastList) {
+    let weatherDaysArray = new Array();
+
+    const currentDate = setCurrentDate(weatherForecastList);
+    const cityName = weatherForecastList.city.name;
+    let currentWeather;
+
+    let dayNumbers = 7;
+    for (let i=0; i<dayNumbers; i++) {
+        let nextDay;
+        let currentDayNum;
+        let currentDateObj;
+
+        if(i===0){
+            currentDayNum = currentDate.getDay();
+            currentDateObj = currentDate;
+            currentWeather = weatherForecastList.list[0]
+        } else {
+            /* Hour(15:00:00) is the forecast time the next day */
+            nextDay = addDays(currentDate, i);
+            currentWeather = getDayIndexByDateAndHour(nextDay, '15:00:00', weatherForecastList);
+            currentDateObj = new Date(nextDay);
+            currentDayNum = currentDateObj.getDay();
+        }
+
+        let {pressure} = currentWeather.main;
+        let {humidity} = currentWeather.main;
+        let {speed} = currentWeather.wind;
+        let {temp} = currentWeather.main;
+        let {id} = currentWeather.weather[0];
+        let dayName = convertDayNumToDayName(currentDayNum);
+        weatherDaysArray.push(new DayWeather(i,dayName,currentDateObj,cityName,pressure,humidity,speed,temp,id));
+    }
+    return weatherDaysArray;
+}
+
+class DayWeather {
+    constructor(index, day, date, city, pressure, humidity, windSpeed, temp, iconId) {
+        this.index = index;
+        this.day = day;
+        this.date = date;
+        this.city = city;
+        this.pressure = pressure;
+        this.humidity = humidity;
+        this.windSpeed = windSpeed;
+        this.temp = Math.floor(temp);
+        this.icon = this.setIcon(iconId);
+    }
+    setIcon(iconId) {
+        let id = String(iconId);
+        const dirIcon = 'images/icons';
+        if (id.startsWith('2')) {
+            return this.icon = `${dirIcon}/thunderstorm.svg`;
+        } else if (id.startsWith('3') || id.startsWith('5')) {
+            return this.icon = `${dirIcon}/rain.svg`;
+        } else if (id.startsWith('6')) {
+            return this.icon = `${dirIcon}/snow.svg`
+        } else if (id.startsWith('7')) {
+            return this.icon = `${dirIcon}/fog.svg`
+        } else if (id === '800') {
+            return this.icon = `${dirIcon}/clear-day.svg`
+        } else if (id.startsWith('8')) {
+            return this.icon = `${dirIcon}/cloudy.svg`
         }
     }
 }
 
-// weather.getCurrentWeatherByGeoCoordinates()
+function getDayIndexByDateAndHour(date, hour, weatherForecast) {
+    let formattedDate = formattDateWithHour(date, hour);
+    let currentWeather;
+    let historyForecast = weatherForecast.list
+    for (let i=1; i<historyForecast.length; i++) {
+        currentWeather = historyForecast[i];
+        let {dt_txt} = currentWeather;
+        if(dt_txt === formattedDate) {
+            currentWeather = weatherForecast.list[i];
+            break;
+        }
+    }
+    return currentWeather;
+}
+
+function convertDayNumToDayName(dayNum) {
+    switch(dayNum) {
+        case 0:
+            return 'Niedziela';
+        case 1: 
+            return 'Poniedziałek';
+        case 2: 
+            return 'Wtorek';
+        case 3:
+            return 'Środa';
+        case 4:
+            return 'Czwartek';
+        case 5:
+            return 'Piątek';
+        case 6:
+            return 'Sobota';
+    }
+}
+
+//TIME FUNCTIONS
+function setCurrentDate(weatherForecast) {
+    let currentWeather = weatherForecast.list[0];
+    let {dt_txt} = currentWeather;
+    const currentDate = new Date(dt_txt);
+    return currentDate;
+}
+
+function addDays(date, days) {
+    const copy = new Date(Number(date))
+    copy.setDate(date.getDate() + days)
+    return formatDate(copy);
+}
+
+function formatDate(date) {
+    return date.toISOString().replace(/T/, ' ').replace(/\..+/, '');
+}
+
+function formattDateWithHour(date, hour) {
+    return date.replace(/\d{2}:\d{2}:\d{2}/, hour);
+}
+
+// https://openweathermap.org/weather-conditions
+
 
 // weatherModule.cloneNode(true);
