@@ -35,7 +35,7 @@ let status = false;
     }
 })();
 
-(() => {
+(async () => {
     let isHidden = weatherModule.hasAttribute('hidden');
     if (isHidden) weatherModule.removeAttribute('hidden');
 })(loadingPage());
@@ -43,7 +43,7 @@ let status = false;
 function loadingPage() {
     setTimeout(() => {
         $body.classList.remove('loading');
-    }, 600)
+    }, 700)
 }
 
 let weather = new OpenWeatherMap();
@@ -238,16 +238,15 @@ function getWeatherByCityName(cityName) {
             // weatherModule.parentNode.appendChild(newModule);
             // $btnsClose = document.querySelectorAll('.btn-remove-module');
             // console.log('z metody',$btnsClose)
-            (() => {
-                let newModule = weatherModule.cloneNode(true);
-                document.querySelector('#app').appendChild(newModule);
-                let arr = getDayWeatherArray(weatherForecastList);
-                setWeatherModule(arr);
-                $body.classList.remove('loading');
-                showAddForm();
-            })(loadingPage())
+            let newModule = weatherModule.cloneNode(true);
+            document.querySelector('#app').appendChild(newModule);
+            let arr = getDayWeatherArray(weatherForecastList);
+            setWeatherModule(arr);
+            $body.classList.remove('loading');
+            showAddForm();
         }
     })
+    loadingPage()
 };
 
 const form = document.querySelector('.find-city');
