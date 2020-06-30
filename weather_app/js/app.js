@@ -1,8 +1,10 @@
 import {OpenWeatherMap} from './open-weather.js'
 
-const $btnClose = document.querySelector('.btn-remove-module');
+let $btnsClose = document.querySelectorAll('.btn-remove-module');
 const btnShowForm = document.querySelector('#add-city');
 const addForm = document.querySelector('.module__form');
+
+let cityNameInput = document.querySelector('#search');
 
 //MAIN WEATHER MODULE
 const weatherModule = document.querySelector('.module__weather');
@@ -34,7 +36,7 @@ const $daysContent = document.querySelectorAll('.day-content');
     setInterval(() => {
         let isHidden = weatherModule.hasAttribute('hidden');
         if (isHidden) weatherModule.removeAttribute('hidden');
-        document.querySelector('body').className -= 'loading';
+        document.querySelector('body').classList.remove('loading');
     }, 600);
 })();
 
@@ -42,8 +44,8 @@ let weather = new OpenWeatherMap();
 
 function getWeekForecast(lat, lon) {
     weather.getWeekForecastByGeoCoordinates(lat, lon, (weekWeather, err)=>{
-        if(err){
-            console.error(err);
+        if(err.status !== '200'){
+            console.error(err.status);
         }else{
             // setCurrentWeather(weekWeather);
             let arr = getDayWeatherArray(weekWeather);
@@ -210,6 +212,8 @@ btnShowForm.addEventListener('click', function() {
 })
 
 function showAddForm() {
+    cityNameInput.style.background = 'white';
+    cityNameInput.placeholder = 'np. Wrocław';
     let isHidden = addForm.hasAttribute('hidden');
     if (isHidden) addForm.removeAttribute('hidden');
     else addForm.setAttribute('hidden', true);
@@ -218,31 +222,60 @@ function showAddForm() {
 //ADDING THE NEW MODULE
 function getWeatherByCityName(cityName) {
     weather.getWeekForecastByCityName(cityName, (weatherForecastList, error)=> {
-        if (error) {
-            console.error(error);
+        if (error.status !== '200') {
+            console.error(error.status);
+            setNotFoundError();
         } else {
+            // weatherModule.parentNode.appendChild(newModule);
+            // $btnsClose = document.querySelectorAll('.btn-remove-module');
+            // console.log('z metody',$btnsClose)
             let newModule = weatherModule.cloneNode(true);
             document.querySelector('#app').appendChild(newModule);
-
             let arr = getDayWeatherArray(weatherForecastList);
             setWeatherModule(arr);
+            
             showAddForm();
         }
     })
-}
+};
 
 const form = document.querySelector('.find-city');
 form.addEventListener('submit', function() {
     event.preventDefault();
-
-
-    let city = document.querySelector('#search');
-    getWeatherByCityName(city.value);
+    let city = cityNameInput.value;
+    if (validate(city)) {
+        getWeatherByCityName(city);
+    }
 })
 
+//VALIDATION ADD
+function validate(cityValue) {
+    let cityName = cityValue.trim();
+    if (cityName === '' || cityName === null) {
+        cityNameInput.style.background = '#ffe0b3';
+        cityNameInput.value = '';
+        cityNameInput.placeholder = 'pole nie może być puste';
+        return false;
+    }
+    if (cityName.match(/^\d+$/)) {
+        cityNameInput.style.background = '#ffe0b3';
+        cityNameInput.value = '';
+        cityNameInput.placeholder = 'nie ma takiego miasta';
+        return false;
+    }
+    return true;
+}
 
+function setNotFoundError() {
+    cityNameInput.style.background = '#ffe0b3';
+    cityNameInput.value = '';
+    cityNameInput.placeholder = 'nie ma takiego miasta';
+}
+
+// console.log($btnsClose)
 //REMOVE MODULE
-$btnClose.addEventListener('click', (ev) => {
-    ev.preventDefault();
-    weatherModule.remove();
+$btnsClose.forEach(btn => {
+    btn.removeEventListener("click", (ev) => {
+        ev.target.parentElement.parentElement.remove()
+    })
 })
