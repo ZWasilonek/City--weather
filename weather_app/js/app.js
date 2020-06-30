@@ -1,5 +1,9 @@
 import {OpenWeatherMap} from './open-weather.js'
 
+const $btnClose = document.querySelector('.btn-remove-module');
+const btnShowForm = document.querySelector('#add-city');
+const addForm = document.querySelector('.module__form');
+
 //MAIN WEATHER MODULE
 const weatherModule = document.querySelector('.module__weather');
 const $cityName = document.querySelector('.city__name');
@@ -12,7 +16,7 @@ const $weatherIcon = document.querySelector('.weather__icon').firstChild;
 //FORECAST WEATHER MODULE SECTION
 const $daysContent = document.querySelectorAll('.day-content');
 
-(async () => {
+(async () => {   
     try {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((position)=>{
@@ -26,20 +30,13 @@ const $daysContent = document.querySelectorAll('.day-content');
     }
 })();
 
-showWeatherContent();
-
-function showWeatherContent() {
-    let isHidden = weatherModule.hasAttribute('hidden');
-    if (isHidden) weatherModule.removeAttribute('hidden');
-}
-
-const btnShowForm = document.querySelector('#add-city');
-btnShowForm.addEventListener('click', function() {
-    const addForm = document.querySelector('.module__form');
-    let isHidden = addForm.hasAttribute('hidden');
-    if (isHidden) addForm.removeAttribute('hidden');
-    else addForm.setAttribute('hidden', true);
-})
+(() => {
+    setInterval(() => {
+        let isHidden = weatherModule.hasAttribute('hidden');
+        if (isHidden) weatherModule.removeAttribute('hidden');
+        document.querySelector('body').className -= 'loading';
+    }, 600);
+})();
 
 let weather = new OpenWeatherMap();
 
@@ -147,6 +144,7 @@ class DayWeather {
             return this.icon = `${dirIcon}/cloudy.svg`
         }
     }
+    // https://openweathermap.org/weather-conditions
 }
 
 function getDayIndexByDateAndHour(date, hour, weatherForecast) {
@@ -205,8 +203,17 @@ function formattDateWithHour(date, hour) {
     return date.replace(/\d{2}:\d{2}:\d{2}/, hour);
 }
 
-// https://openweathermap.org/weather-conditions
 
+//SHOW ADDING FORM
+btnShowForm.addEventListener('click', function() {
+    showAddForm();
+})
+
+function showAddForm() {
+    let isHidden = addForm.hasAttribute('hidden');
+    if (isHidden) addForm.removeAttribute('hidden');
+    else addForm.setAttribute('hidden', true);
+}
 
 //ADDING THE NEW MODULE
 function getWeatherByCityName(cityName) {
@@ -216,8 +223,10 @@ function getWeatherByCityName(cityName) {
         } else {
             let newModule = weatherModule.cloneNode(true);
             document.querySelector('#app').appendChild(newModule);
+
             let arr = getDayWeatherArray(weatherForecastList);
             setWeatherModule(arr);
+            showAddForm();
         }
     })
 }
@@ -226,9 +235,14 @@ const form = document.querySelector('.find-city');
 form.addEventListener('submit', function() {
     event.preventDefault();
 
+
     let city = document.querySelector('#search');
-    console.log(city.value);
     getWeatherByCityName(city.value);
 })
 
-// weatherModule.cloneNode(true);
+
+//REMOVE MODULE
+$btnClose.addEventListener('click', (ev) => {
+    ev.preventDefault();
+    weatherModule.remove();
+})
