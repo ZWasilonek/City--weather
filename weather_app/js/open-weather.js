@@ -9,9 +9,9 @@ function sendResponse(data, err, callback){
 
 	error = err;
 	if(data){
-		if(typeof data === 'undefined'){
-			error = new Error(JSON.parse(data));
-			error.status = e.cod;
+		if(typeof data !== 'undefined'){
+			error = new Error(data);
+			error.status = data.cod;
 		} 
 	}
 	callback(data, error);
