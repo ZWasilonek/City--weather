@@ -17,7 +17,6 @@
 
 <section id="app" class="container">
 
-  <!-- Moduł wyszukiwarki - domyślnie ukryty -->
   <div class="module module__form" hidden>
     <button class="btn btn--icon btn--close btn-add-weather-module"><i class="material-icons">close</i></button>
     <h2>Znajdź miasto</h2>
@@ -29,11 +28,6 @@
     <div class="search-error"></div>
   </div>
 
-  <!--
-     Moduł pogody
-     Poniższy kod możecie potraktować jako template do kolejnych modułów
-     Możecie go sklonować używając metody cloneNode(true), i powstawiać odpowiednie wartości z aktualnego miasta.
-  -->
   <div class="module module__weather" hidden>
     <button class="btn btn--icon btn--close btn-remove-module"><i class="material-icons">close</i></button>
 
@@ -42,7 +36,7 @@
 
       <div class="weather__info">
         <div class="city">
-          <span class="city__name">Wrocław</span> <span class="btn btn--icon"><i class="material-icons">edit</i></span>
+          <span class="city__name">Wrocław</span> 
         </div>
         <div class="temperature"><span class="temperature__value">16.5</span>&deg;C</div>
       </div>
@@ -53,48 +47,66 @@
         <li><img src="images/icons/wind-speed.svg"/> <span class="wind-speed__value">5.5</span><span class="main-info">&nbsp;m/s</span></li>
       </ul>
 
+      <div class="temp-amb">
+        <div class="temp-info">
+          <img src="images/icons/cold.svg" width="50px" height="70px"/>
+          <span><span class="min__temp"></span>&deg;C</span>
+        </div>
+        <div class="temp-info temp-max">
+          <img src="images/icons/hot.svg" width="50px" height="70px"/>
+          <span><span class="max__temp" style="margin-left: 10px;"></span>&deg;C</span>
+        </div>
+      </div>
+
       <ul class="weather__forecast">
-        <div id="day_#1">
+        <div class="day" id="day_#1">
           <li class ="day-content">
-            <span class="day">Wtorek</span> <img src="images/icons/clear-day.svg"/>
+            <span class="day">Poniedziałek</span> <img src="images/icons/clear-day.svg"/>
             <span class="temperature"><span class="temperature__value">10.0</span>&deg;C</span>
           </li>
         </div>
 
-        <div id="day_#2">
+        <div class="day" id="day_#2">
           <li class="day-content">
-            <span class="day">Środa</span> <img src="images/icons/snow.svg"/>
+            <span class="day">Wtorek</span> <img src="images/icons/snow.svg"/>
             <span class="temperature"><span class="temperature__value">-2.3</span>&deg;C</span>
           </li>
         </div>
 
-        <div id="day_#3">
+        <div class="day" id="day_#3">
           <li class="day-content">
-            <span class="day">Czwartek</span> <img src="images/icons/rain.svg"/>
+            <span class="day">Środa</span> <img src="images/icons/rain.svg"/>
             <span class="temperature"><span class="temperature__value">4.8</span>&deg;C</span>
           </li>
         </div>
 
-        <div id="day_#4">
+        <div class="day" id="day_#4">
           <li class="day-content">
-            <span class="day">Piątek</span> <img src="images/icons/cloudy.svg"/>
+            <span class="day">Czwartek</span> <img src="images/icons/cloudy.svg"/>
             <span class="temperature"><span class="temperature__value">5.0</span>&deg;C</span>
           </li>
         </div>
 
-        <div id="day_#5">
+        <div class="day" id="day_#5">
+          <li class="day-content">
+            <span class="day">Piątek</span> <img src="images/icons/hail.svg"/>
+            <span class="temperature"><span class="temperature__value">8.6</span>&deg;C</span>
+          </li>
+        </div>
+
+        <div class="day" id="day_#6">
           <li class="day-content">
             <span class="day">Sobota</span> <img src="images/icons/hail.svg"/>
             <span class="temperature"><span class="temperature__value">8.6</span>&deg;C</span>
           </li>
         </div>
 
-        <div id="day_#6">
+        <div class="day" id="day_#7">
           <li class="day-content">
-            <span class="day">Sobota</span> <img src="images/icons/hail.svg"/>
+            <span class="day">Niedziela</span> <img src="images/icons/hail.svg"/>
             <span class="temperature"><span class="temperature__value">8.6</span>&deg;C</span>
           </li>
-        </ul>
+        </div>
       </ul>
     </div>
   </div>
