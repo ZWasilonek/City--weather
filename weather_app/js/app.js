@@ -1,7 +1,7 @@
 import {OpenWeatherMap} from './open-weather.js'
 
 const $body = document.querySelector('body');
-let $btnsClose = document.querySelectorAll('.btn-remove-module');
+let $btnClose = document.querySelector('.btn-remove-module');
 const btnShowForm = document.querySelector('#add-city');
 const addForm = document.querySelector('.module__form');
 
@@ -19,31 +19,35 @@ const $weatherIcon = document.querySelector('.weather__icon').firstChild;
 //FORECAST WEATHER MODULE SECTION
 const $daysContent = document.querySelectorAll('.day-content');
 
-let status = false;  
 (async () => { 
     try {
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((position)=>{
-                const lat  = position.coords.latitude;
-                const long = position.coords.longitude;
-                getWeekForecast(lat, long)
-            });
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const lat  = position.coords.latitude;
+                    const long = position.coords.longitude;
+                    getWeekForecast(lat, long)  
+                },
+                function errorCallback(error) {
+                    console.error(error);
+                },
+                { timeout:5000 }
+            );
         }
-        status = true;
     } catch (error) {
         console.error(error);
     }
 })();
 
-(async () => {
+function showModule() {
     let isHidden = weatherModule.hasAttribute('hidden');
     if (isHidden) weatherModule.removeAttribute('hidden');
-})(loadingPage());
+}(loadingPage());
 
 function loadingPage() {
     setTimeout(() => {
         $body.classList.remove('loading');
-    }, 700)
+    }, 900);
 }
 
 let weather = new OpenWeatherMap();
@@ -58,6 +62,7 @@ function getWeekForecast(lat, lon) {
             setWeatherModule(arr);
         }
     })
+    showModule();
 }
 
 function setWeatherModule(weatherDaysArray) {
@@ -76,7 +81,7 @@ function setMainWeatherModule(currentDayWeather) {
 }
 
 function setForcastForNextDays(weatherDaysArray) {
-    function setDOMItem(items) {
+    function setModuleItem(items) {
         for (let i=0; i<items.length; i++) {
             let item = items[i];
             item.querySelector('.day').innerHTML = weatherDaysArray[i].day;
@@ -84,7 +89,7 @@ function setForcastForNextDays(weatherDaysArray) {
             item.querySelector('.temperature__value').innerHTML = weatherDaysArray[i].temp
         }
     }
-    setDOMItem($daysContent);
+    setModuleItem($daysContent);
 }
 
 function getDayWeatherArray(weatherForecastList) {
@@ -235,18 +240,19 @@ function getWeatherByCityName(cityName) {
             console.error(error.status);
             setNotFoundError();
         } else {
-            // weatherModule.parentNode.appendChild(newModule);
-            // $btnsClose = document.querySelectorAll('.btn-remove-module');
-            // console.log('z metody',$btnsClose)
             let newModule = weatherModule.cloneNode(true);
             document.querySelector('#app').appendChild(newModule);
+            newModule.querySelector('.btn--close').addEventListener('click', function () {
+                this.parentElement.style.display = 'none';
+            });
             let arr = getDayWeatherArray(weatherForecastList);
             setWeatherModule(arr);
             $body.classList.remove('loading');
             showAddForm();
+            showModule();
         }
     })
-    loadingPage()
+    loadingPage();
 };
 
 const form = document.querySelector('.find-city');
@@ -282,10 +288,7 @@ function setNotFoundError() {
     cityNameInput.placeholder = 'nie ma takiego miasta';
 }
 
-// console.log($btnsClose)
 //REMOVE MODULE
-$btnsClose.forEach(btn => {
-    btn.removeEventListener("click", (ev) => {
-        ev.target.parentElement.parentElement.remove()
-    })
+$btnClose.addEventListener("click", function() {
+    this.parentElement.setAttribute('hidden',true);
 })
