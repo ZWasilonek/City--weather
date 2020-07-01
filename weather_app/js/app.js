@@ -14,6 +14,8 @@ const $pressure = document.querySelector('.pressure__value');
 const $humidity = document.querySelector('.humidity__value');
 const $windSpeed = document.querySelector('.wind-speed__value');
 const $temperature = document.querySelector('.temperature__value');
+const $minTemp = document.querySelector('.min__temp');
+const $maxTemp = document.querySelector('.max__temp');
 const $weatherIcon = document.querySelector('.weather__icon').firstChild;
 
 //FORECAST WEATHER MODULE SECTION
@@ -66,8 +68,7 @@ function getWeekForecast(lat, lon) {
 
 function setWeatherModule(weatherDaysArray) {
     setMainWeatherModule(weatherDaysArray[0]);
-    let [ ,...restDays] = weatherDaysArray; 
-    setForcastForNextDays(restDays);
+    setForcastForNextDays(weatherDaysArray);
 }
 
 function setMainWeatherModule(currentDayWeather) {
@@ -76,6 +77,8 @@ function setMainWeatherModule(currentDayWeather) {
     $humidity.innerHTML = currentDayWeather.humidity;
     $windSpeed.innerHTML = currentDayWeather.windSpeed;
     $temperature.innerHTML = currentDayWeather.temp;
+    $minTemp.innerHTML = currentDayWeather.minTemp;
+    $maxTemp.innerHTML = currentDayWeather.maxTemp;
     $weatherIcon.src = currentDayWeather.icon;
 }
 
@@ -108,6 +111,7 @@ function getDayWeatherArray(weatherForecastList) {
             currentDayNum = currentDate.getDay();
             currentDateObj = currentDate;
             currentWeather = weatherForecastList.list[0]
+            console.log(currentWeather)
         } else {
             /* Hour(15:00:00) is the forecast time the next day */
             nextDay = addDays(currentDate, i);
@@ -116,19 +120,23 @@ function getDayWeatherArray(weatherForecastList) {
             currentDayNum = currentDateObj.getDay();
         }
 
-        let {pressure} = currentWeather.main;
-        let {humidity} = currentWeather.main;
+        const mainInfo = currentWeather.main;
+        let {pressure} = mainInfo;
+        let {humidity} = mainInfo;
         let {speed} = currentWeather.wind;
-        let {temp} = currentWeather.main;
+        let {temp} = mainInfo;
+        let {temp_min} = mainInfo;
+        let {temp_max} = mainInfo;
         let {id} = currentWeather.weather[0];
         let dayName = convertDayNumToDayName(currentDayNum);
-        weatherDaysArray.push(new DayWeather(i,dayName,currentDateObj,cityName,pressure,humidity,speed,temp,id));
+        weatherDaysArray.push(new DayWeather(
+            i,dayName,currentDateObj,cityName,pressure,humidity,speed,temp,temp_min,temp_max,id));
     }
     return weatherDaysArray;
 }
 
 class DayWeather {
-    constructor(index, day, date, city, pressure, humidity, windSpeed, temp, iconId) {
+    constructor(index, day, date, city, pressure, humidity, windSpeed, temp, minTemp, maxTemp, iconId) {
         this.index = index;
         this.day = day;
         this.date = date;
@@ -137,6 +145,8 @@ class DayWeather {
         this.humidity = humidity;
         this.windSpeed = windSpeed;
         this.temp = Math.floor(temp);
+        this.minTemp = Math.floor(minTemp);
+        this.maxTemp = Math.floor(maxTemp);
         this.icon = this.setIcon(iconId);
     }
     setIcon(iconId) {
@@ -290,4 +300,9 @@ function setNotFoundError() {
 //REMOVE MODULE
 $btnClose.addEventListener("click", function() {
     this.parentElement.setAttribute('hidden',true);
+})
+
+const $dayModule = document.querySelectorAll('.day');
+$dayModule.addEventListener('click', function() {
+
 })
