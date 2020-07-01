@@ -57,7 +57,6 @@ function getWeekForecast(lat, lon) {
         if(err.status !== '200'){
             console.error(err.status);
         }else{
-            // setCurrentWeather(weekWeather);
             let arr = getDayWeatherArray(weekWeather);
             setWeatherModule(arr);
         }
