@@ -1,7 +1,8 @@
 import {OW_API_KEY} from '../../api_keys.js';
 
-const herokuCORS = 'https://cors-anywhere.herokuapp.com/';
-
+// const herokuCORS = 'https://cors-anywhere.herokuapp.com/';
+const headers = new Headers();
+headers
 class OpenWeatherMap {};
 
 function sendResponse(data, err, callback){
@@ -17,17 +18,17 @@ function sendResponse(data, err, callback){
 	callback(data, error);
 }
 
-OpenWeatherMap.prototype.getWeekForecastByGeoCoordinates = function(latitude, longitude, callback) {
-	const requestURL = `api.openweathermap.org/data/2.5/forecast?lat=${parseFloat(latitude)}&lon=${parseFloat(longitude)}&
+OpenWeatherMap.prototype.getWeekForecastByGeoCoordinates = async function(latitude, longitude, callback) {
+	const requestURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${parseFloat(latitude)}&lon=${parseFloat(longitude)}&
 	exclude=hourly,daily&appid=${OW_API_KEY}&units=metric&lang=pl`;
-	return fetch(herokuCORS+requestURL).then(resp=>resp.json())
+	return await fetch(requestURL).then(resp=>resp.json())
 	.then((data, err)=>sendResponse(data, err, callback));
 };
 
-OpenWeatherMap.prototype.getWeekForecastByCityName = function(cityName, callback) {
-	const requestURL = `api.openweathermap.org/data/2.5/forecast?q=${cityName}&
+OpenWeatherMap.prototype.getWeekForecastByCityName = async function(cityName, callback) {
+	const requestURL = `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&
 	exclude=hourly,daily&appid=${OW_API_KEY}&units=metric&lang=pl`;
-	return fetch(herokuCORS+requestURL).then(resp=>resp.json())
+	return await fetch(requestURL).then(resp=>resp.json())
 	.then((data, err)=>sendResponse(data, err, callback));
 };
 
