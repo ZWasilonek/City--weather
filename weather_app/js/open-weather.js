@@ -1,8 +1,6 @@
 import {OW_API_KEY} from '../../api_keys.js';
 
 // const herokuCORS = 'https://cors-anywhere.herokuapp.com/';
-const headers = new Headers();
-headers
 class OpenWeatherMap {};
 
 function sendResponse(data, err, callback){
