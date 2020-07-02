@@ -32,29 +32,24 @@
     <button class="btn btn--icon btn--close btn-remove-module"><i class="material-icons">close</i></button>
 
     <div class="weather">
-      <div class="weather__icon"><img src="images/icons/partly-cloudy-day.svg"/></div>
+      <div class="main-weather-details">
+        <div class="left-info">
+          <div class="weather__icon"><img src="images/icons/partly-cloudy-day.svg"/></div>
 
-      <div class="weather__info">
-        <div class="city">
-          <span class="city__name">Wrocław</span> 
+          <div class="weather__info">
+            <div class="city">
+              <span class="city__name">Wrocław</span> 
+            </div>
+            <div class="temperature"><span class="temperature__value">16.5</span>&deg;C</div>
+          </div>
         </div>
-        <div class="temperature"><span class="temperature__value">16.5</span>&deg;C</div>
-      </div>
 
-      <ul class="weather__details">
-        <li><img src="images/icons/pressure.svg"/> <span class="pressure__value">998</span><span class="main-info">&nbsp;hPa</span></li>
-        <li><img src="images/icons/humidity.svg"/> <span class="humidity__value">45</span><span class="main-info">&nbsp;%</span></li>
-        <li><img src="images/icons/wind-speed.svg"/> <span class="wind-speed__value">5.5</span><span class="main-info">&nbsp;m/s</span></li>
-      </ul>
-
-      <div class="temp-amb">
-        <div class="temp-info">
-          <img src="images/icons/cold.svg" width="50px" height="70px"/>
-          <span><span class="min__temp"></span>&deg;C</span>
-        </div>
-        <div class="temp-info temp-max">
-          <img src="images/icons/hot.svg" width="50px" height="70px"/>
-          <span><span class="max__temp" style="margin-left: 10px;"></span>&deg;C</span>
+        <div>
+          <ul class="weather__details">
+            <li><img src="images/icons/pressure.svg"/> <span class="pressure__value">998</span><span class="main-info">&nbsp;hPa</span></li>
+            <li><img src="images/icons/humidity.svg"/> <span class="humidity__value">45</span><span class="main-info">&nbsp;%</span></li>
+            <li><img src="images/icons/wind-speed.svg"/> <span class="wind-speed__value">5.5</span><span class="main-info">&nbsp;m/s</span></li>
+          </ul>
         </div>
       </div>
 
