@@ -14,8 +14,6 @@ const $pressure = document.querySelector('.pressure__value');
 const $humidity = document.querySelector('.humidity__value');
 const $windSpeed = document.querySelector('.wind-speed__value');
 const $temperature = document.querySelector('.temperature__value');
-const $minTemp = document.querySelector('.min__temp');
-const $maxTemp = document.querySelector('.max__temp');
 const $weatherIcon = document.querySelector('.weather__icon').firstChild;
 
 //FORECAST WEATHER MODULE SECTION
@@ -28,7 +26,7 @@ const $daysContent = document.querySelectorAll('.day-content');
                 function(position) {
                     const lat  = position.coords.latitude;
                     const long = position.coords.longitude;
-                    getWeekForecast(lat, long)  
+                    getWeekForecast(lat, long)
                 },
                 function errorCallback(error) {
                     console.error(error);
@@ -77,8 +75,6 @@ function setMainWeatherModule(currentDayWeather) {
     $humidity.innerHTML = currentDayWeather.humidity;
     $windSpeed.innerHTML = currentDayWeather.windSpeed;
     $temperature.innerHTML = currentDayWeather.temp;
-    $minTemp.innerHTML = currentDayWeather.minTemp;
-    $maxTemp.innerHTML = currentDayWeather.maxTemp;
     $weatherIcon.src = currentDayWeather.icon;
 }
 
@@ -94,11 +90,11 @@ function setForcastForNextDays(weatherDaysArray) {
     setModuleItem($daysContent);
 }
 
-function getDayWeatherArray(weatherForecastList) {
+function getDayWeatherArray(weatherForecast) {
     let weatherDaysArray = new Array();
 
-    const currentDate = setCurrentDate(weatherForecastList);
-    const cityName = weatherForecastList.city.name;
+    const currentDate = setCurrentDate(weatherForecast);
+    const cityName = weatherForecast.city.name;
     let currentWeather;
 
     let dayNumbers = 7;
@@ -110,12 +106,11 @@ function getDayWeatherArray(weatherForecastList) {
         if(i===0){
             currentDayNum = currentDate.getDay();
             currentDateObj = currentDate;
-            currentWeather = weatherForecastList.list[0]
-            console.log(currentWeather)
+            currentWeather = weatherForecast.list[0]
         } else {
             /* Hour(15:00:00) is the forecast time the next day */
             nextDay = addDays(currentDate, i);
-            currentWeather = getDayIndexByDateAndHour(nextDay, '15:00:00', weatherForecastList);
+            currentWeather = getDayWeatherByDateAndHour(nextDay, '15:00:00', weatherForecast).currentWeather;
             currentDateObj = new Date(nextDay);
             currentDayNum = currentDateObj.getDay();
         }
@@ -125,18 +120,16 @@ function getDayWeatherArray(weatherForecastList) {
         let {humidity} = mainInfo;
         let {speed} = currentWeather.wind;
         let {temp} = mainInfo;
-        let {temp_min} = mainInfo;
-        let {temp_max} = mainInfo;
         let {id} = currentWeather.weather[0];
         let dayName = convertDayNumToDayName(currentDayNum);
         weatherDaysArray.push(new DayWeather(
-            i,dayName,currentDateObj,cityName,pressure,humidity,speed,temp,temp_min,temp_max,id));
+            i,dayName,currentDateObj,cityName,pressure,humidity,speed,temp,id));
     }
     return weatherDaysArray;
 }
 
 class DayWeather {
-    constructor(index, day, date, city, pressure, humidity, windSpeed, temp, minTemp, maxTemp, iconId) {
+    constructor(index, day, date, city, pressure, humidity, windSpeed, temp, iconId) {
         this.index = index;
         this.day = day;
         this.date = date;
@@ -145,8 +138,6 @@ class DayWeather {
         this.humidity = humidity;
         this.windSpeed = windSpeed;
         this.temp = Math.floor(temp);
-        this.minTemp = Math.floor(minTemp);
-        this.maxTemp = Math.floor(maxTemp);
         this.icon = this.setIcon(iconId);
     }
     setIcon(iconId) {
@@ -169,20 +160,24 @@ class DayWeather {
     // https://openweathermap.org/weather-conditions
 }
 
-function getDayIndexByDateAndHour(date, hour, weatherForecast) {
-    let formattedDate = formattDateWithHour(date, hour);
+function getDayWeatherByDateAndHour(date, hour, weatherForecast) {
+    let formattedDate = formatDateWithHour(date, hour);
     let currentWeather;
+    let index;
     let historyForecast = weatherForecast.list
     for (let i=1; i<historyForecast.length; i++) {
         currentWeather = historyForecast[i];
         let {dt_txt} = currentWeather;
         if(dt_txt === formattedDate) {
             currentWeather = weatherForecast.list[i];
+            index = i;
             break;
         }
     }
-    return currentWeather;
+    return {currentWeather, index};
 }
+
+
 
 function convertDayNumToDayName(dayNum) {
     switch(dayNum) {
@@ -221,7 +216,7 @@ function formatDate(date) {
     return date.toISOString().replace(/T/, ' ').replace(/\..+/, '');
 }
 
-function formattDateWithHour(date, hour) {
+function formatDateWithHour(date, hour) {
     return date.replace(/\d{2}:\d{2}:\d{2}/, hour);
 }
 
@@ -302,7 +297,7 @@ $btnClose.addEventListener("click", function() {
     this.parentElement.setAttribute('hidden',true);
 })
 
-const $dayModule = document.querySelectorAll('.day');
-$dayModule.addEventListener('click', function() {
+// const $dayModule = document.querySelectorAll('.day');
+// $dayModule.addEventListener('click', function() {
 
-})
+// })
