@@ -34,11 +34,12 @@
     <div class="weather">
       <div class="main-weather-details">
         <div class="left-info">
-          <div class="weather__icon"><img src="images/icons/clear-day.svg"/></div>
+          <div class="weather__icon"><img src="images/icons/clear-day.svg" width="100%" height="100%"></div>
 
           <div class="weather__info">
             <div class="city">
-              <span class="city__name">Wrocław</span> 
+              <span class="city__name main-info">Wrocław</span><br>
+              <span class="day__name">Poniedziałek</span>
             </div>
             <div class="temperature"><span class="temperature__value">16.5</span>&deg;C</div>
           </div>
@@ -51,43 +52,54 @@
             <li><img src="images/icons/wind-speed.svg"/> <span class="wind-speed__value">5.5</span><span class="main-info">&nbsp;m/s</span></li>
           </ul>
         </div>
+
+        <div class="temp-amb">
+          <div class="temp-info">
+            <img src="images/icons/cold.svg" width="50px" height="70px"/>
+            <span><span class="min__temp"></span>&deg;C</span>
+          </div>
+          <div class="temp-info temp-max">
+            <img src="images/icons/hot.svg" width="50px" height="70px"/>
+            <span><span class="max__temp" style="margin-left: 10px;"></span>&deg;C</span>
+          </div>
+        </div>
       </div>
 
       <ul class="weather__forecast">
-        <div class="day" id="day_#1">
+        <!-- <div class="day-box" id="day_#1"> -->
           <li class ="day-content">
             <span class="day">Poniedziałek</span> <img src="images/icons/clear-day.svg"/>
             <span class="temperature"><span class="temperature__value">10.0</span>&deg;C</span>
           </li>
-        </div>
+        <!-- </div> -->
 
-        <div class="day" id="day_#2">
+        <!-- <div class="day-box" id="day_#2"> -->
           <li class="day-content">
             <span class="day">Wtorek</span> <img src="images/icons/snowy-4.svg"/>
             <span class="temperature"><span class="temperature__value">-2.3</span>&deg;C</span>
           </li>
-        </div>
+        <!-- </div> -->
 
-        <div class="day" id="day_#3">
+        <!-- <div class="day-box" id="day_#3"> -->
           <li class="day-content">
             <span class="day">Środa</span> <img src="images/icons/rainy-1.svg"/>
             <span class="temperature"><span class="temperature__value">4.8</span>&deg;C</span>
           </li>
-        </div>
+        <!-- </div> -->
 
-        <div class="day" id="day_#4">
+        <!-- <div class="day-box" id="day_#4"> -->
           <li class="day-content">
             <span class="day">Czwartek</span> <img src="images/icons/cloudy-day-2.svg"/>
             <span class="temperature"><span class="temperature__value">5.0</span>&deg;C</span>
           </li>
-        </div>
+        <!-- </div> -->
 
-        <div class="day" id="day_#5">
+        <!-- <div class="day-box" id="day_#5"> -->
           <li class="day-content">
             <span class="day">Piątek</span> <img src="images/icons/hail.svg"/>
             <span class="temperature"><span class="temperature__value">8.6</span>&deg;C</span>
           </li>
-        </div>
+        <!-- </div> -->
       </ul>
     </div>
   </div>
