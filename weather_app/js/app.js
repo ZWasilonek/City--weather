@@ -19,6 +19,8 @@ const $weatherIcon = document.querySelector('.weather__icon').firstChild;
 //FORECAST WEATHER MODULE SECTION
 const $daysContent = document.querySelectorAll('.day-content');
 
+const daysWeatherObjArray = [];
+
 (async () => { 
     try {
         if (navigator.geolocation) {
@@ -57,16 +59,18 @@ function getWeekForecast(lat, lon) {
         if(err.status !== '200'){
             console.error(err.status);
         }else{
-            let arr = getDayWeatherArray(weekWeather);
-            setWeatherModule(arr);
+            getDayWeatherHourlyForecast(weekWeather)
+            let forecast5Days = get5DayWeatherObject(daysWeatherObjArray);
+            setWeatherModule(forecast5Days);
         }
     })
     showModule();
 }
 
-function setWeatherModule(weatherDaysArray) {
-    setMainWeatherModule(weatherDaysArray[0]);
-    setForcastForNextDays(weatherDaysArray);
+function setWeatherModule(daysWeatherForecastArr) {
+    let currentDateWeather = daysWeatherForecastArr[0];
+    setMainWeatherModule(currentDateWeather);
+    setForcastForNextDays(daysWeatherForecastArr);
 }
 
 function setMainWeatherModule(currentDayWeather) {
@@ -90,47 +94,47 @@ function setForcastForNextDays(weatherDaysArray) {
     setModuleItem($daysContent);
 }
 
-function getDayWeatherArray(weatherForecast) {
+function get5DayWeatherObject(daysWeatherObjArray) {
     let weatherDaysArray = new Array();
 
-    const currentDate = setCurrentDate(weatherForecast);
-    const cityName = weatherForecast.city.name;
-    let currentWeather;
-
-    let dayNumbers = 7;
-    for (let i=0; i<dayNumbers; i++) {
-        let nextDay;
-        let currentDayNum;
-        let currentDateObj;
+    for (let i=0; i<daysWeatherObjArray.length; i++) {
+        let dailyHourlyForecastArray = daysWeatherObjArray[i].dailyHourlyForecastArray;
+        let currentWeather;
 
         if(i===0){
-            currentDayNum = currentDate.getDay();
-            currentDateObj = currentDate;
-            currentWeather = weatherForecast.list[0]
+            currentWeather = dailyHourlyForecastArray[i];
+            weatherDaysArray.push(currentWeather);
+            continue;
         } else {
-            /* Hour(15:00:00) is the forecast time the next day */
-            nextDay = addDays(currentDate, i);
-            currentWeather = getDayWeatherByDateAndHour(nextDay, '15:00:00', weatherForecast).currentWeather;
-            currentDateObj = new Date(nextDay);
-            currentDayNum = currentDateObj.getDay();
+            let hour = '15:00:00';
+            currentWeather = dailyHourlyForecastArray[0];
+            let weatherWithSelectedTime = getDayWeatherByDateAndHour(currentWeather.date, hour, dailyHourlyForecastArray).currentWeather;
+            weatherDaysArray.push(weatherWithSelectedTime);
         }
-
-        const mainInfo = currentWeather.main;
-        let {pressure} = mainInfo;
-        let {humidity} = mainInfo;
-        let {speed} = currentWeather.wind;
-        let {temp} = mainInfo;
-        let {id} = currentWeather.weather[0];
-        let dayName = convertDayNumToDayName(currentDayNum);
-        weatherDaysArray.push(new DayWeather(
-            i,dayName,currentDateObj,cityName,pressure,humidity,speed,temp,id));
     }
     return weatherDaysArray;
 }
 
+function getDayWeatherByDateAndHour(date, hour, dayWeatherHourlyArray) {
+    let formattedDate = formatDateWithHour(date, hour);
+
+    for (let index=0; index<dayWeatherHourlyArray.length; index++) {
+        let currentWeather = dayWeatherHourlyArray[index];
+        let dateOfDayWeather = currentWeather.date;
+        if(dateOfDayWeather === formattedDate) {
+            return {currentWeather, index}
+        }
+    }
+}
+
+class DayWeatherHourlyForecast {
+    constructor(dailyHourlyForecastArray) {
+        this.dailyHourlyForecastArray = dailyHourlyForecastArray;
+    }
+}
+
 class DayWeather {
-    constructor(index, day, date, city, pressure, humidity, windSpeed, temp, iconId) {
-        this.index = index;
+    constructor(day, date, city, pressure, humidity, windSpeed, temp, iconId) {
         this.day = day;
         this.date = date;
         this.city = city;
@@ -177,24 +181,58 @@ class DayWeather {
     // https://openweathermap.org/weather-conditions
 }
 
-function getDayWeatherByDateAndHour(date, hour, weatherForecast) {
-    let formattedDate = formatDateWithHour(date, hour);
-    let currentWeather;
-    let index;
-    let historyForecast = weatherForecast.list
-    for (let i=1; i<historyForecast.length; i++) {
-        currentWeather = historyForecast[i];
-        let {dt_txt} = currentWeather;
-        if(dt_txt === formattedDate) {
-            currentWeather = weatherForecast.list[i];
-            index = i;
-            break;
+function getDayWeatherHourlyForecast(weatherForecast) {
+
+    let enteredDay = setCurrentDate(weatherForecast).getDate();
+    let historyForecast = weatherForecast.list;
+    const city = weatherForecast.city.name;
+    let objCounter = 0;
+
+    for (let i=objCounter; i<historyForecast.length; i++) {
+        let daysWeatherWithSameDate = [];
+        let isSameDay = true;
+
+        while (isSameDay) {
+            let currentWeather = historyForecast[objCounter];
+            let dateWeather = currentWeather.dt_txt;
+            let dayNumWeatherIndex = new Date(dateWeather).getDate();
+
+            if (objCounter === historyForecast.length-1) {
+                break;
+            } 
+            else if (dayNumWeatherIndex !== enteredDay) {
+                isSameDay = false;
+                enteredDay = dayNumWeatherIndex;
+            } else {
+                let dayWeather = convertOpenWeatherObjectToDayWeatherObject(currentWeather, city);
+                daysWeatherWithSameDate.push(dayWeather);
+                objCounter++;
+            }
+        }
+        if (objCounter < historyForecast.length-1) {
+            daysWeatherObjArray.push(new DayWeatherHourlyForecast(daysWeatherWithSameDate));
         }
     }
-    return {currentWeather, index};
 }
 
 
+//CONVERTERS
+function convertOpenWeatherObjectToDayWeatherObject(openWeatherObjects, cityName) {
+    const mainInfo = openWeatherObjects.main;
+    let date = new Date(openWeatherObjects.dt_txt);
+
+    let currentDayNum = date.getDay();
+    let formattedDate = formatDate(date);
+    let {pressure} = mainInfo;
+    let {humidity} = mainInfo;
+    let {speed} = openWeatherObjects.wind;
+    let {temp} = mainInfo;
+    let {id} = openWeatherObjects.weather[0];
+    let dayName = convertDayNumToDayName(currentDayNum);
+    let newDayWeather = new DayWeather(dayName,formattedDate,cityName,pressure,humidity,speed,temp,id);
+
+    return newDayWeather;
+}
 
 function convertDayNumToDayName(dayNum) {
     switch(dayNum) {
@@ -223,14 +261,20 @@ function setCurrentDate(weatherForecast) {
     return currentDate;
 }
 
-function addDays(date, days) {
-    const copy = new Date(Number(date))
-    copy.setDate(date.getDate() + days)
-    return formatDate(copy);
-}
-
 function formatDate(date) {
-    return date.toISOString().replace(/T/, ' ').replace(/\..+/, '');
+    let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    let options = {
+        timeZone: timezone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    }
+    let d = date.toLocaleString('pl-PL', options);
+    return d.replace(/\./, '-').replace(/\./, '-').replace(/,/, '');
 }
 
 function formatDateWithHour(date, hour) {
@@ -256,7 +300,7 @@ function showAddForm() {
 //ADDING THE NEW MODULE
 function getWeatherByCityName(cityName) {
     $body.className += 'loading';
-    weather.getWeekForecastByCityName(cityName, (weatherForecastList, error)=> {
+    weather.getWeekForecastByCityName(cityName, (weatherForecast, error)=> {
         if (error.status !== '200') {
             console.error(error.status);
             setNotFoundError();
@@ -266,7 +310,7 @@ function getWeatherByCityName(cityName) {
             newModule.querySelector('.btn--close').addEventListener('click', function () {
                 this.parentElement.style.display = 'none';
             });
-            let arr = getDayWeatherArray(weatherForecastList);
+            let arr = getDayWeatherArray(weatherForecast);
             setWeatherModule(arr);
             $body.classList.remove('loading');
             showAddForm();
@@ -313,8 +357,3 @@ function setNotFoundError() {
 $btnClose.addEventListener("click", function() {
     this.parentElement.setAttribute('hidden',true);
 })
-
-// const $dayModule = document.querySelectorAll('.day');
-// $dayModule.addEventListener('click', function() {
-
-// })
