@@ -245,6 +245,12 @@ form.find-city button{
   margin-left:10px;
   text-align:center;
 }
+.max__temp{
+  margin-left: 10px;
+}
+.min__temp{
+  margin-left: -20px;
+}
 .city__name{
   font-size:25px;
 }
