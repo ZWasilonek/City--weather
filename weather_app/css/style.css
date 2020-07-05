@@ -151,12 +151,17 @@ header .logo img{
   margin-right:25px;
   padding-right:25px;
 }
+.main-weather{
+  text-align: center;
+  width: 80%;
+  margin: 0 auto;
+}
 .main-weather-details{
   display:flex;
   align-items:center;
-  width:80%;
   height:170px;
-  margin:0 auto
+  margin:0 auto;
+  padding-left: 25px;
 }
 .left-info{
   display: flex;
@@ -243,4 +248,10 @@ form.find-city button{
 .city__name{
   font-size:25px;
 }
-.day__name{font-size:19px};
+.day__name{
+  font-size:19px;
+}
+.hour{
+  width: 100%;
+  text-align: center;
+}
