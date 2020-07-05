@@ -16,6 +16,8 @@ const $humidity = document.querySelector('.humidity__value');
 const $windSpeed = document.querySelector('.wind-speed__value');
 const $temperature = document.querySelector('.temperature__value');
 const $weatherIcon = document.querySelector('.weather__icon').firstChild;
+const $minTemp = document.querySelector('.min__temp');
+const $maxTemp = document.querySelector('.max__temp');
 
 //FORECAST WEATHER MODULE SECTION
 const $daysContent = document.querySelectorAll('.day-content');
@@ -70,12 +72,13 @@ function getWeekForecast(lat, lon) {
 }
 
 function setWeatherModule(daysWeatherForecastArr) {
-    let currentDateWeather = daysWeatherForecastArr[0];
-    setMainWeatherModule(currentDateWeather);
+    setMainWeatherModule(daysWeatherForecastArr);
     setForcastForNextDays(daysWeatherForecastArr);
 }
 
-function setMainWeatherModule(currentDayWeather) {
+function setMainWeatherModule(daysWeatherForecastArr) {
+    let currentDayWeather = daysWeatherForecastArr[0];
+
     $dayName.innerHTML = currentDayWeather.day;
     $cityName.innerHTML = currentDayWeather.city;
     $pressure.innerHTML = currentDayWeather.pressure;
@@ -83,6 +86,8 @@ function setMainWeatherModule(currentDayWeather) {
     $windSpeed.innerHTML = currentDayWeather.windSpeed;
     $temperature.innerHTML = currentDayWeather.temp;
     $weatherIcon.src = currentDayWeather.icon;
+    $maxTemp.innerHTML = getMaxTemp(daysWeatherForecastArr);
+    $minTemp.innerHTML = getMinTemp(daysWeatherForecastArr);
 }
 
 function setForcastForNextDays(weatherDaysArray) {
@@ -98,8 +103,6 @@ function setForcastForNextDays(weatherDaysArray) {
 }
 
 function get5DayWeatherObject(daysWeatherObjArray) {
-    // let weatherDaysArray = new Array();
-
     for (let i=0; i<daysWeatherObjArray.length; i++) {
         let dailyHourlyForecastArray = daysWeatherObjArray[i].dailyHourlyForecastArray;
         let currentWeather;
@@ -115,7 +118,6 @@ function get5DayWeatherObject(daysWeatherObjArray) {
             dailyForecastFor5Day.push(weatherWithSelectedTime);
         }
     }
-    // return weatherDaysArray;
 }
 
 function getDayWeatherByDateAndHour(date, hour, dayWeatherHourlyArray) {
@@ -213,7 +215,8 @@ function getDayWeatherHourlyForecast(weatherForecast) {
             }
         }
         if (objCounter < historyForecast.length-1) {
-            daysWeatherObjArray.push(new DayWeatherHourlyForecast(daysWeatherWithSameDate));
+            let hourlyWeatherArray = new DayWeatherHourlyForecast(daysWeatherWithSameDate);
+            daysWeatherObjArray.push(hourlyWeatherArray);
         }
     }
 }
@@ -254,6 +257,28 @@ function convertDayNumToDayName(dayNum) {
         case 6:
             return 'Sobota';
     }
+}
+
+//TEMPERATURE AMPLITUDE 
+function getMaxTemp(dailyHourlyForecastArray) {
+    let tempArray = getTempArr(dailyHourlyForecastArray);
+    let maxTemp = Math.max(...tempArray);
+    return maxTemp;
+}
+
+function getMinTemp(dailyHourlyForecastArray) {
+    let tempArray = getTempArr(dailyHourlyForecastArray);
+    let minTemp = Math.min(...tempArray);
+    return minTemp;
+}
+
+function getTempArr(dailyHourlyForecastArray) {
+    let tempArray = [];
+    for (let i=0; i<dailyHourlyForecastArray.length; i++) {
+        let currentWeather = dailyHourlyForecastArray[i];
+        tempArray.push(currentWeather.temp);
+    }
+    return tempArray;
 }
 
 //TIME FUNCTIONS
@@ -365,16 +390,22 @@ $btnClose.addEventListener("click", function() {
 $daysContent.forEach(day => {
     day.addEventListener('click', function() {
         let dayName = day.firstElementChild.innerText
-        let selectedDayWeather = findWeatherByDayName(dayName)
-        setMainWeatherModule(selectedDayWeather);
+        let selectedDaysWeather = findHourlyForecastByDayName(dayName)
+        setMainWeatherModule(selectedDaysWeather);
     })
 })
 
-function findWeatherByDayName(enteredDayName) {
-    for (let index=0; index<dailyForecastFor5Day.length; index++) {
-        let currentWeather = dailyForecastFor5Day[index];
-        let dayName = currentWeather.day;
-        if(enteredDayName === dayName)
-            return currentWeather
+function findHourlyForecastByDayName(enteredDayName) {
+    const daysWeatherArray = [];
+    let daysArrayByDayName;
+    for (let index=0; index<daysWeatherObjArray.length; index++) {
+        daysArrayByDayName = daysWeatherObjArray[index].dailyHourlyForecastArray;
+        if (daysArrayByDayName[index].day === enteredDayName) {
+            for (let j=0; j<daysArrayByDayName.length; j++) {
+                let currentWeather = daysArrayByDayName[j];
+                daysWeatherArray.push(currentWeather);
+            }
+        }
     } 
+    return daysWeatherArray;
 }
