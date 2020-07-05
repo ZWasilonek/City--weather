@@ -9,6 +9,7 @@ let cityNameInput = document.querySelector('#search');
 
 //MAIN WEATHER MODULE
 const weatherModule = document.querySelector('.module__weather');
+const $hour = document.querySelector('.hour');
 const $dayName = document.querySelector('.day__name');
 const $cityName = document.querySelector('.city__name');
 const $pressure = document.querySelector('.pressure__value');
@@ -78,14 +79,18 @@ function setWeatherModule(daysWeatherForecastArr) {
 
 function setMainWeatherModule(daysWeatherForecastArr) {
     let currentDayWeather = daysWeatherForecastArr[0];
+    setMainHTMLTags(daysWeatherForecastArr, currentDayWeather);
+}
 
-    $dayName.innerHTML = currentDayWeather.day;
-    $cityName.innerHTML = currentDayWeather.city;
-    $pressure.innerHTML = currentDayWeather.pressure;
-    $humidity.innerHTML = currentDayWeather.humidity;
-    $windSpeed.innerHTML = currentDayWeather.windSpeed;
-    $temperature.innerHTML = currentDayWeather.temp;
-    $weatherIcon.src = currentDayWeather.icon;
+function setMainHTMLTags(daysWeatherForecastArr, selectedHourWeather) {
+    $hour.innerHTML = selectedHourWeather.hour;
+    $dayName.innerHTML = selectedHourWeather.day;
+    $cityName.innerHTML = selectedHourWeather.city;
+    $pressure.innerHTML = selectedHourWeather.pressure;
+    $humidity.innerHTML = selectedHourWeather.humidity;
+    $windSpeed.innerHTML = selectedHourWeather.windSpeed;
+    $temperature.innerHTML = selectedHourWeather.temp;
+    $weatherIcon.src = selectedHourWeather.icon;
     $maxTemp.innerHTML = getMaxTemp(daysWeatherForecastArr);
     $minTemp.innerHTML = getMinTemp(daysWeatherForecastArr);
 }
@@ -139,9 +144,10 @@ class DayWeatherHourlyForecast {
 }
 
 class DayWeather {
-    constructor(day, date, city, pressure, humidity, windSpeed, temp, iconId) {
+    constructor(day, date, hour, city, pressure, humidity, windSpeed, temp, iconId) {
         this.day = day;
         this.date = date;
+        this.hour = hour;
         this.city = city;
         this.pressure = pressure;
         this.humidity = humidity;
@@ -229,13 +235,14 @@ function convertOpenWeatherObjectToDayWeatherObject(openWeatherObjects, cityName
 
     let currentDayNum = date.getDay();
     let formattedDate = formatDate(date);
+    let hour = formatHourToDisplay(formattedDate);
     let {pressure} = mainInfo;
     let {humidity} = mainInfo;
     let {speed} = openWeatherObjects.wind;
     let {temp} = mainInfo;
     let {id} = openWeatherObjects.weather[0];
     let dayName = convertDayNumToDayName(currentDayNum);
-    let newDayWeather = new DayWeather(dayName,formattedDate,cityName,pressure,humidity,speed,temp,id);
+    let newDayWeather = new DayWeather(dayName,formattedDate,hour,cityName,pressure,humidity,speed,temp,id);
 
     return newDayWeather;
 }
@@ -307,6 +314,11 @@ function formatDate(date) {
 
 function formatDateWithHour(date, hour) {
     return date.replace(/\d{2}:\d{2}:\d{2}/, hour);
+}
+
+function formatHourToDisplay(date) {
+    let timeFragment = date.slice(11, 16);
+    return timeFragment;
 }
 
 
@@ -389,9 +401,11 @@ $btnClose.addEventListener("click", function() {
 //SHOW SELECTED DAY DETAILS
 $daysContent.forEach(day => {
     day.addEventListener('click', function() {
-        let dayName = day.firstElementChild.innerText
+        let dayName = day.firstElementChild.innerText;
         let selectedDaysWeather = findHourlyForecastByDayName(dayName)
         setMainWeatherModule(selectedDaysWeather);
+        manageRightArrow(canScrollRight=true);
+        manageLeftArrow(canScrollLeft = false);
     })
 })
 
@@ -405,7 +419,62 @@ function findHourlyForecastByDayName(enteredDayName) {
                 let currentWeather = daysArrayByDayName[j];
                 daysWeatherArray.push(currentWeather);
             }
+            break;
         }
     } 
     return daysWeatherArray;
+}
+
+const $leftArrow = document.querySelector('.left__arrow');
+const $rigthArrow = document.querySelector('.right__arrow');
+
+let counter = 0
+let canScrollRight = true;
+let canScrollLeft = false;
+
+manageLeftArrow(canScrollLeft);
+
+$leftArrow.addEventListener('click', () => {
+    let selectedDaysWeather = findHourlyForecastByDayName($dayName.innerHTML);
+    if (counter > 0) {
+        canScrollLeft = true;
+        manageRightArrow(canScrollRight = true);
+        --counter;
+        setMainHTMLTags(selectedDaysWeather,selectedDaysWeather[counter])
+    } else {
+        canScrollLeft = false;
+    }
+    if (counter === 0) 
+        manageLeftArrow(canScrollLeft = false);
+});
+
+$rigthArrow.addEventListener('click', () => {
+    let selectedDaysWeather = findHourlyForecastByDayName($dayName.innerHTML);
+    if (counter < selectedDaysWeather.length-1) {
+        ++counter;
+        if (counter === selectedDaysWeather.length-1) 
+            manageRightArrow(canScrollRight = false);
+        else manageRightArrow(canScrollRight = true);
+        canScrollRight = true;
+        manageLeftArrow(canScrollLeft = true);
+        setMainHTMLTags(selectedDaysWeather,selectedDaysWeather[counter])
+    } else {
+        canScrollRight = false;
+    }
+})
+
+function manageLeftArrow(canScrollLeft) {
+    if (canScrollLeft) {
+        $leftArrow.removeAttribute('hidden');
+    } else {
+        $leftArrow.setAttribute('hidden', true);
+    }
+}
+
+function manageRightArrow(canScrollRight) {
+    if (canScrollRight) {
+        $rigthArrow.removeAttribute('hidden');
+    } else {
+        $rigthArrow.setAttribute('hidden', true);
+    }
 }
