@@ -182,7 +182,7 @@ class DayWeather {
             if (id === '500' || id === '520') this.icon = dirIcon+'rainy-4.svg';
             else if (id === '501' || id === '502' || id === '521') this.icon = dirIcon+'rainy-5.svg';
             else if (id === '503' || id === '504' || id === '531' || id === '522') this.icon = dirIcon+'rainy-6.svg';
-            else if (id === '511') this.icon = dirIcon+'rainy-7.svg';
+            else if (id === '511') this.icon = dirIcon+'hail.svg';
         } else if (id.startsWith('6')) {
             if (id === '600' || id === '611' || id === '612' || id === '615' || id === '620') 
                 this.icon = dirIcon+'snowy-4.svg';
@@ -190,17 +190,29 @@ class DayWeather {
                 this.icon = dirIcon+'snowy-5.svg';
             else if (id === '602' || id === '622') this.icon = dirIcon+'snowy-6.svg'
         } else if (id.startsWith('7')) {
-            if (id === '781') this.icon = dirIcon+'tornado.svg';
+            if (id === '781') this.icon = dirIcon+'fog.svg';
             else this.icon = dirIcon+'fog.svg';
         } else if (id === '800') {
-            this.icon = dirIcon+'clear-day.svg';
+            if (this.isItNight) this.icon = dirIcon+'night.svg';
+            else this.icon = dirIcon+'clear-day.svg';
         } else if (id.startsWith('8')) {
-            if (id === '801') this.icon = dirIcon+'cloudy-day-1.svg';
-            else if (id === '802') this.icon = dirIcon+'cloudy-day-2.svg'
-            else if (id === '803') this.icon = dirIcon+'cloudy-day-3.svg'
-            else if (id === '804') this.icon = dirIcon+'hail.svg';
+            if (id === '801') {
+                if (this.isItNight()) this.icon = dirIcon+'cloudy-night-1.svg';
+                else this.icon = dirIcon+'cloudy-day-1.svg';
+            } else if (id === '802') {
+                if (this.isItNight()) {
+                    this.icon = dirIcon+'cloudy-night-2.svg'
+                } else this.icon = dirIcon+'cloudy-day-2.svg';
+            } else if (id === '803') {
+                if (this.isItNight()) this.icon = dirIcon+'cloudy-night-3.svg';
+                else this.icon = dirIcon+'cloudy-day-3.svg';
+            } else if (id === '804') this.icon = dirIcon+'cloudy-4.svg';
         }
         return this.icon;
+    }
+
+    isItNight() {
+        return this.hour === '00:00' || this.hour === '03:00' || this.hour === '21:00';
     }
     // https://openweathermap.org/weather-conditions
 }
