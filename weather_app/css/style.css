@@ -260,4 +260,5 @@ form.find-city button{
 .hour{
   width: 100%;
   text-align: center;
+  margin-left: 5px;
 }
