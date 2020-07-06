@@ -1,18 +1,21 @@
-import {OpenWeatherMap} from './open-weather.js'
+import {OpenWeatherMap} from './open-weather.js';
+import {getCountryName} from './countryCodes.js';
 
 const $body = document.querySelector('body');
-let $btnClose = document.querySelector('.btn-remove-module');
+const $btnClose = document.querySelector('.btn-remove-module');
+const $btnFormClose = document.querySelector('.btn-add-weather-module');
 const btnShowForm = document.querySelector('#add-city');
 const addForm = document.querySelector('.module__form');
 const $leftArrow = document.querySelector('.left__arrow');
 const $rigthArrow = document.querySelector('.right__arrow');
-let cityNameInput = document.querySelector('#search');
+const cityNameInput = document.querySelector('#search');
 
 //MAIN WEATHER MODULE
 const weatherModule = document.querySelector('.module__weather');
 const $hour = document.querySelector('.hour');
 const $dayName = document.querySelector('.day__name');
 const $cityName = document.querySelector('.city__name');
+const $country = document.querySelector('.country');
 const $pressure = document.querySelector('.pressure__value');
 const $humidity = document.querySelector('.humidity__value');
 const $windSpeed = document.querySelector('.wind-speed__value');
@@ -24,8 +27,8 @@ const $maxTemp = document.querySelector('.max__temp');
 //FORECAST WEATHER MODULE SECTION
 const $daysContent = document.querySelectorAll('.day-content');
 
-const daysWeatherObjArray = [];
-const dailyForecastFor5Day = [];
+// / const daysWeatherObjArray = [];
+// // const dailyForecastFor5Day = [];/
 let counter;
 
 (async () => { 
@@ -66,10 +69,14 @@ function getWeekForecast(lat, lon) {
         if(err.status !== '200'){
             console.error(err.status);
         }else{
+            let counter;
+            const daysWeatherObjArray = [];
+            const dailyForecastFor5Day = [];
+
             getDayWeatherHourlyForecast(weekWeather, daysWeatherObjArray)
             get5DayWeatherObject(daysWeatherObjArray, dailyForecastFor5Day);
             setWeatherModule(dailyForecastFor5Day);
-            setArrows();        
+            manageHourlyWeather(daysWeatherObjArray, counter);            
         }
     })
     showModule();
@@ -89,6 +96,7 @@ function setMainHTMLTags(daysWeatherForecastArr, selectedHourWeather) {
     $hour.innerHTML = selectedHourWeather.hour;
     $dayName.innerHTML = selectedHourWeather.day;
     $cityName.innerHTML = selectedHourWeather.city;
+    $country.innerHTML = getCountryName(selectedHourWeather.country);
     $pressure.innerHTML = selectedHourWeather.pressure;
     $humidity.innerHTML = selectedHourWeather.humidity;
     $windSpeed.innerHTML = selectedHourWeather.windSpeed;
@@ -140,6 +148,7 @@ function getDayWeatherByDateAndHour(date, hour, dayWeatherHourlyArray) {
     }
 }
 
+//OBJECTS
 class DayWeatherHourlyForecast {
     constructor(dailyHourlyForecastArray) {
         this.dailyHourlyForecastArray = dailyHourlyForecastArray;
@@ -147,11 +156,12 @@ class DayWeatherHourlyForecast {
 }
 
 class DayWeather {
-    constructor(day, date, hour, city, pressure, humidity, windSpeed, temp, iconId) {
+    constructor(day, date, hour, city, country, pressure, humidity, windSpeed, temp, iconId) {
         this.day = day;
         this.date = date;
         this.hour = hour;
         this.city = city;
+        this.country = country;
         this.pressure = pressure;
         this.humidity = humidity;
         this.windSpeed = windSpeed;
@@ -196,10 +206,9 @@ class DayWeather {
 }
 
 function getDayWeatherHourlyForecast(weatherForecast, daysWeatherObjArray) {
-
     let enteredDay = setCurrentDate(weatherForecast).getDate();
     let historyForecast = weatherForecast.list;
-    const city = weatherForecast.city.name;
+    const {city} = weatherForecast;
     let objCounter = 0;
 
     for (let i=objCounter; i<historyForecast.length; i++) {
@@ -230,22 +239,23 @@ function getDayWeatherHourlyForecast(weatherForecast, daysWeatherObjArray) {
     }
 }
 
-
 //CONVERTERS
-function convertOpenWeatherObjectToDayWeatherObject(openWeatherObjects, cityName) {
+function convertOpenWeatherObjectToDayWeatherObject(openWeatherObjects, cityListInfo) {
     const mainInfo = openWeatherObjects.main;
     let date = new Date(openWeatherObjects.dt_txt);
 
     let currentDayNum = date.getDay();
     let formattedDate = formatDate(date);
     let hour = formatHourToDisplay(formattedDate);
+    let city = cityListInfo.name;
+    let country = cityListInfo.country;
     let {pressure} = mainInfo;
     let {humidity} = mainInfo;
     let {speed} = openWeatherObjects.wind;
     let {temp} = mainInfo;
     let {id} = openWeatherObjects.weather[0];
     let dayName = convertDayNumToDayName(currentDayNum);
-    let newDayWeather = new DayWeather(dayName,formattedDate,hour,cityName,pressure,humidity,speed,temp,id);
+    let newDayWeather = new DayWeather(dayName,formattedDate,hour,city,country,pressure,humidity,speed,temp,id);
 
     return newDayWeather;
 }
@@ -340,6 +350,11 @@ function showAddForm() {
     else addForm.setAttribute('hidden', true);
 }
 
+//CLOSE ADDING FORM
+$btnFormClose.addEventListener('click', function() {
+    showAddForm();
+})
+
 //ADDING THE NEW MODULE
 function getWeatherByCityName(cityName) {
     $body.className += 'loading';
@@ -348,20 +363,25 @@ function getWeatherByCityName(cityName) {
             console.error(error.status);
             setNotFoundError();
         } else {
+            $leftArrow.setAttribute('hidden', true);
+            $rigthArrow.setAttribute('hidden', true);
             let newModule = weatherModule.cloneNode(true);
             document.querySelector('#app').appendChild(newModule);
+
+            //REMOVE MODULE
             newModule.querySelector('.btn--close').addEventListener('click', function () {
                 this.parentElement.style.display = 'none';
             });
+
             let daysWeatherObjArray = [];
             let dailyForecastFor5Day = [];
             getDayWeatherHourlyForecast(weatherForecast, daysWeatherObjArray)
             get5DayWeatherObject(daysWeatherObjArray, dailyForecastFor5Day);
             setWeatherModule(dailyForecastFor5Day);
-            setArrows();
-            $body.classList.remove('loading');
+            manageHourlyWeather(daysWeatherObjArray, counter)
             showAddForm();
             showModule();
+            $body.classList.remove('loading');
         }
     })
     loadingPage();
@@ -406,83 +426,88 @@ $btnClose.addEventListener("click", function() {
 })
 
 //SHOW SELECTED DAY DETAILS
-function setArrows() {
-    let selectedDaysWeather = findHourlyForecastByDayName($dayName.innerHTML);
-    let date = selectedDaysWeather[0].date;
-    counter = getIndexOfDailyHourlyWeatherArrayByDate(date,selectedDaysWeather);
-    manageLeftArrow(counter);
-    manageRightArrow(counter,selectedDaysWeather);
-}
+function manageHourlyWeather(daysWeatherObjArray, counter) {
 
-$daysContent.forEach(day => {
-    day.addEventListener('click', function() {
-        let dayName = day.firstElementChild.innerText;
-        let selectedDaysWeather = findHourlyForecastByDayName(dayName)
-        setMainWeatherModule(selectedDaysWeather);
-        setArrows();
-    })
-})
+    setArrows();
 
-function findHourlyForecastByDayName(enteredDayName) {
-    const daysWeatherArray = [];
-    let daysArrayByDayName;
-    for (let index=0; index<daysWeatherObjArray.length; index++) {
-        daysArrayByDayName = daysWeatherObjArray[index].dailyHourlyForecastArray;
-        if (daysArrayByDayName[index].day === enteredDayName) {
-            for (let j=0; j<daysArrayByDayName.length; j++) {
-                let currentWeather = daysArrayByDayName[j];
-                daysWeatherArray.push(currentWeather);
-            }
-            break;
-        }
-    } 
-    return daysWeatherArray;
-}
-
-$leftArrow.addEventListener('click', () => {
-    let selectedDaysWeather = findHourlyForecastByDayName($dayName.innerHTML);
-    if (counter > 0) {
-        --counter;
-        setMainHTMLTags(selectedDaysWeather,selectedDaysWeather[counter])
-    }
-    manageLeftArrow(counter);
-    manageRightArrow(counter,selectedDaysWeather);
-});
-
-$rigthArrow.addEventListener('click', () => {
-    let selectedDaysWeather = findHourlyForecastByDayName($dayName.innerHTML);
-    if (counter < selectedDaysWeather.length-1) {
-        ++counter;
+    function setArrows() {
+        let selectedDaysWeather = findHourlyForecastByDayName($dayName.innerHTML);
+        let date = selectedDaysWeather[0].date;
+        counter = getIndexOfDailyHourlyWeatherArrayByDate(date,selectedDaysWeather);
         manageLeftArrow(counter);
+        manageRightArrow(counter,selectedDaysWeather);
     }
-    manageRightArrow(counter,selectedDaysWeather);
-    setMainHTMLTags(selectedDaysWeather,selectedDaysWeather[counter])
-})
 
-function manageLeftArrow(counter) {
-    const $leftArrow = document.querySelector('.left__arrow');
-    if (counter === 0) {
-        $leftArrow.setAttribute('hidden', true);
-    } else {
-        $leftArrow.removeAttribute('hidden');
+    $daysContent.forEach(day => {
+        day.addEventListener('click', function() {
+            let dayName = day.firstElementChild.innerText;
+            let selectedDaysWeather = findHourlyForecastByDayName(dayName)
+            setMainWeatherModule(selectedDaysWeather);
+            setArrows();
+        })
+    })
+
+    function findHourlyForecastByDayName(enteredDayName) {
+        const daysWeatherArray = [];
+        let daysArrayByDayName;
+        for (let index=0; index<daysWeatherObjArray.length; index++) {
+            daysArrayByDayName = daysWeatherObjArray[index].dailyHourlyForecastArray;
+            if (daysArrayByDayName[index].day === enteredDayName) {
+                for (let j=0; j<daysArrayByDayName.length; j++) {
+                    let currentWeather = daysArrayByDayName[j];
+                    daysWeatherArray.push(currentWeather);
+                }
+                break;
+            }
+        } 
+        return daysWeatherArray;
     }
-}
 
-function manageRightArrow(counter, selectedDaysWeather) {
-    const $rigthArrow = document.querySelector('.right__arrow');
-    if (counter === selectedDaysWeather.length-1) { 
-        $rigthArrow.setAttribute('hidden', true);
-    } else {
-        $rigthArrow.removeAttribute('hidden');
+    $leftArrow.addEventListener('click', () => {
+        let selectedDaysWeather = findHourlyForecastByDayName($dayName.innerHTML);
+        if (counter > 0) {
+            --counter;
+            setMainHTMLTags(selectedDaysWeather,selectedDaysWeather[counter])
+        }
+        manageLeftArrow(counter);
+        manageRightArrow(counter,selectedDaysWeather);
+    });
+
+    $rigthArrow.addEventListener('click', () => {
+        let selectedDaysWeather = findHourlyForecastByDayName($dayName.innerHTML);
+        if (counter < selectedDaysWeather.length-1) {
+            ++counter;
+            manageLeftArrow(counter);
+        }
+        manageRightArrow(counter,selectedDaysWeather);
+        setMainHTMLTags(selectedDaysWeather,selectedDaysWeather[counter])
+    })
+
+    function manageLeftArrow(counter) {
+        const $leftArrow = document.querySelector('.left__arrow');
+        if (counter === 0) {
+            $leftArrow.setAttribute('hidden', true);
+        } else {
+            $leftArrow.removeAttribute('hidden');
+        }
     }
-}
 
-function getIndexOfDailyHourlyWeatherArrayByDate(date, dayWeatherHourlyArray) {
-    for (let index=0; index<dayWeatherHourlyArray.length; index++) {
-        let currentWeather = dayWeatherHourlyArray[index];
-        let dateOfDayWeather = currentWeather.date;
-        if(dateOfDayWeather === date) {
-            return index;
+    function manageRightArrow(counter, selectedDaysWeather) {
+        const $rigthArrow = document.querySelector('.right__arrow');
+        if (counter === selectedDaysWeather.length-1) { 
+            $rigthArrow.setAttribute('hidden', true);
+        } else {
+            $rigthArrow.removeAttribute('hidden');
+        }
+    }
+
+    function getIndexOfDailyHourlyWeatherArrayByDate(date, dayWeatherHourlyArray) {
+        for (let index=0; index<dayWeatherHourlyArray.length; index++) {
+            let currentWeather = dayWeatherHourlyArray[index];
+            let dateOfDayWeather = currentWeather.date;
+            if(dateOfDayWeather === date) {
+                return index;
+            }
         }
     }
 }
