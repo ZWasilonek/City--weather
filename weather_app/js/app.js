@@ -393,8 +393,8 @@ function getWeatherByCityName(cityName) {
             manageHourlyWeather(daysWeatherObjArray, counter)
             showAddForm();
             showModule();
-            $body.classList.remove('loading');
         }
+        $body.classList.remove('loading');
     })
     loadingPage();
 };
@@ -439,7 +439,6 @@ $btnClose.addEventListener("click", function() {
 
 //SHOW SELECTED DAY DETAILS
 function manageHourlyWeather(daysWeatherObjArray, counter) {
-
     setArrows();
 
     function setArrows() {
