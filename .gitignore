@@ -3,18 +3,10 @@
 logs
 *.log
 npm-debug.log*
-package-lock.json
 node_modules/
 .sass-cache/
-package.json
-webpack.config.js
 .babelrc
-api_keys.js
-
-!2_Snippety/1_Konfiguracja_srodowiska/.babelrc
-!2_Snippety/1_Konfiguracja_srodowiska/package.json
-!2_Snippety/1_Konfiguracja_srodowiska/webpack.config.js
-
+.env
 ### OSX ###
 .DS_Store
 .AppleDouble
