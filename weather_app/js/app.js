@@ -193,7 +193,7 @@ class DayWeather {
             if (id === '781') this.icon = dirIcon+'fog.svg';
             else this.icon = dirIcon+'fog.svg';
         } else if (id === '800') {
-            if (this.isItNight) this.icon = dirIcon+'night.svg';
+            if (this.isItNight()) this.icon = dirIcon+'night.svg';
             else this.icon = dirIcon+'clear-day.svg';
         } else if (id.startsWith('8')) {
             if (id === '801') {
