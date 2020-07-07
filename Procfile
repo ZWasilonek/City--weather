@@ -1,1 +1,1 @@
-web: node webpack.config.js
+web: npm run build || npm start
