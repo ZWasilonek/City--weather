@@ -48,8 +48,9 @@ module.exports = {
       minRatio: 0.8
     }),
     new Dotenv({
-      path: './.env',
-      safe: true 
+      path: path.resolve(__dirname, './.env'),
+      safe: true,
+      silent: false
     })
   ],
 }
