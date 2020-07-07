@@ -4,7 +4,7 @@
 
 ## Prezentacja
 
-<img src="./weather_app/weather-app-3.gif"/>
+<img src="./weather_app/images/icons/app.png"/>
 
 ## Contact 
 zofiawasilonek@.gmail.com<br>
