@@ -15,7 +15,7 @@ module.exports = {
     contentBase: path.join(__dirname, `${entryPath}`),
     publicPath: "/build/",
     compress: true,
-    port: 5000
+    port: PORT
   },
   mode: "development",
   devtool: "source-map",
