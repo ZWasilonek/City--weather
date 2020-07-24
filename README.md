@@ -7,6 +7,11 @@ z której aplikacja zostaje uruchomiona, dlatego też przeglądarka może prosi�
 
 <img src="./weather_app/images/icons/app.png"/>
 
+## Technologie 
+
+* NodeJS
+* JavaScript 
+
 ## Uruchom aplikację
 
 Najpier należy pobrać unikalne API_KEY ze strony [https://openweathermap.org/api](https://openweathermap.org/api), które otrzymamy po darmowej rejestracji.<br>
