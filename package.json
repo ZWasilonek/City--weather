@@ -3,13 +3,10 @@
   "version": "1.0.0",
   "description": "Weather-city-app",
   "main": "index.js",
-  "engines": {
-    "npm": "6.x",
-    "node": "14.x"
-  },
   "scripts": {
-    "start": "node server.js",
-    "heroku-postbuild": "webpack -p"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack-dev-server --hot -d",
+    "build": "webpack -p"
   },
   "repository": {
     "type": "git",
@@ -17,28 +14,24 @@
   },
   "author": "Zofia Wasilonek",
   "license": "ISC",
-  "dependencies": {
-    "whatwg-fetch": "^3.0.0"
-  },
   "homepage": "https://github.com/ZWasilonek/City-weather#readme",
+  "dependencies": {
+    "whatwg-fetch": "^3.2.0"
+  },
   "devDependencies": {
-    "@babel/core": "^7.10.3",
-    "@babel/plugin-proposal-class-properties": "^7.10.1",
-    "@babel/plugin-transform-runtime": "^7.10.3",
-    "@babel/preset-env": "^7.10.3",
-    "@babel/runtime": "^7.10.3",
+    "@babel/core": "^7.10.5",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/plugin-transform-runtime": "^7.10.5",
+    "@babel/preset-env": "^7.10.4",
+    "@babel/runtime": "^7.10.5",
     "babel-loader": "^8.1.0",
     "babel-plugin-minify-dead-code-elimination": "^0.5.1",
-    "compression-webpack-plugin": "^4.0.0",
     "dotenv-webpack": "^1.8.0",
     "file-loader": "^6.0.0",
-    "openweathermap-node": "^1.1.2",
-    "webpack": "^4.43.0",
+    "webpack": "^4.44.0",
     "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.11.0"
-  },
-  "bugs": {
-    "url": "https://github.com/ZWasilonek/City-weather/issues"
+    "webpack-dev-server": "^3.11.0",
+    "compression-webpack-plugin": "^4.0.0"
   },
   "keywords": [],
   "browserslist": [
