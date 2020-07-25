@@ -15,20 +15,23 @@ z której aplikacja zostaje uruchomiona, dlatego też przeglądarka może prosi�
 ## Uruchom aplikację
 
 Najpier należy pobrać unikalne API_KEY ze strony [https://openweathermap.org/api](https://openweathermap.org/api), które otrzymamy po darmowej rejestracji.<br>
-Następnie w pliku open-weather.js, który znajdziemy w katalogu /weather_app/js należy podać otrzymany API_KEY : 
+Następnie w pliku .env_sample, który znajdziemy w katalogu głównym, należy podać otrzymany API_KEY : 
 
 ```
-open-weather.js
+.env_sample
 
 
-const OW_API_KEY = 
+OW_API_KEY = 
 ```
+### `npm i`
+
+Zainstaluje potrzebne zależności
 
 ### `npm run build | npm start`
 
 Uruchamia aplikację lokalnie<br />
 Otwórz [http://localhost:5000](http://localhost:5000) aby zobaczyć rezultat w przeglądarce.
 
-## Contact 
+## Kontakt 
 zofiawasilonek@.gmail.com<br>
 <a href="https://www.linkedin.com/in/zofia-wasilonek/">Linkedin</a>
