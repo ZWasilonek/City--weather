@@ -6,6 +6,7 @@ npm-debug.log*
 node_modules/
 .sass-cache/
 .babelrc
+.env
 ### OSX ###
 .DS_Store
 .AppleDouble
@@ -97,6 +98,7 @@ web_modules/
 .yarn-integrity
 
 # dotenv environment variables file
+.env
 .env.test
 
 # parcel-bundler cache (https://parceljs.org/)

@@ -49,8 +49,8 @@ module.exports = {
     }),
     new Dotenv({
       path: path.resolve(__dirname, './.env'),
-      safe: true,
-      silent: false
+      // safe: true,
+      // silent: false
     })
   ],
 }
