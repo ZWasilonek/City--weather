@@ -8,6 +8,10 @@
     "start": "webpack-dev-server --hot -d",
     "build": "webpack -p"
   },
+  "engines": {
+    "node": "14.4.0",
+    "npm": "6.14.5"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ZWasilonek/City-weather.git"
