@@ -6,6 +6,7 @@ const Compression = require("compression-webpack-plugin");
 const Dotenv = require('dotenv-webpack');
 const { definitions } = new Dotenv();
 
+
 module.exports = {
   entry: ["whatwg-fetch", `./${entryPath}/js/${entryFile}`],
   output: {
@@ -48,10 +49,16 @@ module.exports = {
       threshold: 0,
       minRatio: 0.8
     }),
+    // new Dotenv({
+      // path: path.resolve(__dirname, './.env'),
+      // safe: true,
+      // silent: false
+    // }),
+    new Dotenv({ systemVars: true })
     // [new webpack.DefinePlugin({ ...definitions }),],
-    new Dotenv({
-      path: path.resolve(__dirname, '..', '.env'),
-    }),
+    // new Dotenv({
+    //   path: path.resolve(__dirname, '..', '.env'),
+    // }),
   ],
 }
 
