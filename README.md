@@ -18,7 +18,7 @@ Najpier należy pobrać unikalne API_KEY ze strony [https://openweathermap.org/a
 Następnie w pliku .env_sample, który znajdziemy w katalogu głównym, należy podać otrzymany API_KEY : 
 
 ```
-.env_sample
+.env
 
 
 OW_API_KEY = 
