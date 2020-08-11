@@ -15,7 +15,7 @@ z której aplikacja zostaje uruchomiona, dlatego też przeglądarka może prosi�
 ## Uruchom aplikację
 
 Najpier należy pobrać unikalne API_KEY ze strony [https://openweathermap.org/api](https://openweathermap.org/api), które otrzymamy po darmowej rejestracji.<br>
-Następnie w pliku .env_sample, który znajdziemy w katalogu głównym, należy podać otrzymany API_KEY : 
+Następnie w pliku .env, który znajdziemy w katalogu głównym, należy podać otrzymany API_KEY : 
 
 ```
 .env
