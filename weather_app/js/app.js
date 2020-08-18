@@ -362,7 +362,6 @@ $btnFormClose.addEventListener('click', function () {
 
 //ADDING THE NEW MODULE
 function getWeatherByCityName(cityName) {
-    // $body.className += 'loading';
     $body.classList.add('loading');
     weather.getWeekForecastByCityName(cityName, (weatherForecast, error) => {
         if (error.status !== '200') {
