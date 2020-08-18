@@ -1,5 +1,5 @@
-import {OpenWeatherMap} from './open-weather.js';
-import {getCountryName} from './country-codes.js';
+import { OpenWeatherMap } from './open-weather.js';
+import { getCountryName } from './country-codes.js';
 
 const $body = document.querySelector('body');
 const $btnClose = document.querySelector('.btn-remove-module');
@@ -29,19 +29,20 @@ const $daysContent = document.querySelectorAll('.day-content');
 
 let counter;
 
-(async () => { 
+(async () => {
+    $body.classList.add('loading');
     try {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
-                function(position) {
-                    const lat  = position.coords.latitude;
+                function (position) {
+                    const lat = position.coords.latitude;
                     const long = position.coords.longitude;
-                    getWeekForecast(lat, long)
+                    getWeekForecast(lat, long);
                 },
                 function errorCallback(error) {
                     console.error(error);
                 },
-                { timeout:5000 }
+                { timeout: 5000 }
             );
         }
     } catch (error) {
@@ -52,21 +53,16 @@ let counter;
 function showModule() {
     let isHidden = weatherModule.hasAttribute('hidden');
     if (isHidden) weatherModule.removeAttribute('hidden');
-}(loadingPage());
-
-function loadingPage() {
-    setTimeout(() => {
-        $body.classList.remove('loading');
-    }, 900);
-}
+    $body.classList.remove('loading');
+};
 
 let weather = new OpenWeatherMap();
 
 function getWeekForecast(lat, lon) {
-    weather.getWeekForecastByGeoCoordinates(lat, lon, (weekWeather, err)=>{
-        if(err.status !== '200'){
+    weather.getWeekForecastByGeoCoordinates(lat, lon, (weekWeather, err) => {
+        if (err.status !== '200') {
             console.error(err.status);
-        }else{
+        } else {
             let counter;
             const daysWeatherObjArray = [];
             const dailyForecastFor5Day = [];
@@ -74,10 +70,10 @@ function getWeekForecast(lat, lon) {
             getDayWeatherHourlyForecast(weekWeather, daysWeatherObjArray)
             get5DayWeatherObject(daysWeatherObjArray, dailyForecastFor5Day);
             setWeatherModule(dailyForecastFor5Day);
-            manageHourlyWeather(daysWeatherObjArray, counter);            
+            manageHourlyWeather(daysWeatherObjArray, counter);
+            showModule();
         }
     })
-    showModule();
 }
 
 function setWeatherModule(daysWeatherForecastArr) {
@@ -106,7 +102,7 @@ function setMainHTMLTags(daysWeatherForecastArr, selectedHourWeather) {
 
 function setForcastForNextDays(weatherDaysArray) {
     function setModuleItem(items) {
-        for (let i=0; i<items.length; i++) {
+        for (let i = 0; i < items.length; i++) {
             let item = items[i];
             item.querySelector('.day').innerHTML = weatherDaysArray[i].day;
             item.querySelector('img').src = weatherDaysArray[i].icon;
@@ -117,11 +113,11 @@ function setForcastForNextDays(weatherDaysArray) {
 }
 
 function get5DayWeatherObject(daysWeatherObjArray, dailyForecastFor5Day) {
-    for (let i=0; i<daysWeatherObjArray.length; i++) {
+    for (let i = 0; i < daysWeatherObjArray.length; i++) {
         let dailyHourlyForecastArray = daysWeatherObjArray[i].dailyHourlyForecastArray;
         let currentWeather;
 
-        if(i===0){
+        if (i === 0) {
             currentWeather = dailyHourlyForecastArray[i];
             dailyForecastFor5Day.push(currentWeather);
             continue;
@@ -137,11 +133,11 @@ function get5DayWeatherObject(daysWeatherObjArray, dailyForecastFor5Day) {
 function getDayWeatherByDateAndHour(date, hour, dayWeatherHourlyArray) {
     let formattedDate = formatDateWithHour(date, hour);
 
-    for (let index=0; index<dayWeatherHourlyArray.length; index++) {
+    for (let index = 0; index < dayWeatherHourlyArray.length; index++) {
         let currentWeather = dayWeatherHourlyArray[index];
         let dateOfDayWeather = currentWeather.date;
-        if(dateOfDayWeather === formattedDate) {
-            return {currentWeather, index}
+        if (dateOfDayWeather === formattedDate) {
+            return { currentWeather, index }
         }
     }
 }
@@ -169,41 +165,41 @@ class DayWeather {
         let id = String(iconId);
         const dirIcon = `images/icons/`;
         if (id.startsWith('2')) {
-            this.icon = dirIcon+'thunder.svg';
+            this.icon = dirIcon + 'thunder.svg';
         } else if (id.startsWith('3')) {
-            if (id === '300' || id === '310') this.icon = dirIcon+'rainy-2.svg';
-            else if (id === '301' || id === '311') this.icon = dirIcon+'rainy-1.svg';
-            else if (id === '302' || id === '321') this.icon = dirIcon+'rainy-3.svg';
-            else if (id === '313' || id === '314' || id === '312') this.icon = dirIcon+'rainy-4.svg';
+            if (id === '300' || id === '310') this.icon = dirIcon + 'rainy-2.svg';
+            else if (id === '301' || id === '311') this.icon = dirIcon + 'rainy-1.svg';
+            else if (id === '302' || id === '321') this.icon = dirIcon + 'rainy-3.svg';
+            else if (id === '313' || id === '314' || id === '312') this.icon = dirIcon + 'rainy-4.svg';
         } else if (id.startsWith('5')) {
-            if (id === '500' || id === '520') this.icon = dirIcon+'rainy-4.svg';
-            else if (id === '501' || id === '502' || id === '521') this.icon = dirIcon+'rainy-5.svg';
-            else if (id === '503' || id === '504' || id === '531' || id === '522') this.icon = dirIcon+'rainy-6.svg';
-            else if (id === '511') this.icon = dirIcon+'hail.svg';
+            if (id === '500' || id === '520') this.icon = dirIcon + 'rainy-4.svg';
+            else if (id === '501' || id === '502' || id === '521') this.icon = dirIcon + 'rainy-5.svg';
+            else if (id === '503' || id === '504' || id === '531' || id === '522') this.icon = dirIcon + 'rainy-6.svg';
+            else if (id === '511') this.icon = dirIcon + 'hail.svg';
         } else if (id.startsWith('6')) {
-            if (id === '600' || id === '611' || id === '612' || id === '615' || id === '620') 
-                this.icon = dirIcon+'snowy-4.svg';
-            else if (id === '601' || id === '613' || id === '616' || id === '621') 
-                this.icon = dirIcon+'snowy-5.svg';
-            else if (id === '602' || id === '622') this.icon = dirIcon+'snowy-6.svg'
+            if (id === '600' || id === '611' || id === '612' || id === '615' || id === '620')
+                this.icon = dirIcon + 'snowy-4.svg';
+            else if (id === '601' || id === '613' || id === '616' || id === '621')
+                this.icon = dirIcon + 'snowy-5.svg';
+            else if (id === '602' || id === '622') this.icon = dirIcon + 'snowy-6.svg'
         } else if (id.startsWith('7')) {
-            if (id === '781') this.icon = dirIcon+'fog.svg';
-            else this.icon = dirIcon+'fog.svg';
+            if (id === '781') this.icon = dirIcon + 'fog.svg';
+            else this.icon = dirIcon + 'fog.svg';
         } else if (id === '800') {
-            if (this.isItNight()) this.icon = dirIcon+'night.svg';
-            else this.icon = dirIcon+'clear-day.svg';
+            if (this.isItNight()) this.icon = dirIcon + 'night.svg';
+            else this.icon = dirIcon + 'clear-day.svg';
         } else if (id.startsWith('8')) {
             if (id === '801') {
-                if (this.isItNight()) this.icon = dirIcon+'cloudy-night-1.svg';
-                else this.icon = dirIcon+'cloudy-day-1.svg';
+                if (this.isItNight()) this.icon = dirIcon + 'cloudy-night-1.svg';
+                else this.icon = dirIcon + 'cloudy-day-1.svg';
             } else if (id === '802') {
                 if (this.isItNight()) {
-                    this.icon = dirIcon+'cloudy-night-2.svg'
-                } else this.icon = dirIcon+'cloudy-day-2.svg';
+                    this.icon = dirIcon + 'cloudy-night-2.svg'
+                } else this.icon = dirIcon + 'cloudy-day-2.svg';
             } else if (id === '803') {
-                if (this.isItNight()) this.icon = dirIcon+'cloudy-night-3.svg';
-                else this.icon = dirIcon+'cloudy-day-3.svg';
-            } else if (id === '804') this.icon = dirIcon+'cloudy-4.svg';
+                if (this.isItNight()) this.icon = dirIcon + 'cloudy-night-3.svg';
+                else this.icon = dirIcon + 'cloudy-day-3.svg';
+            } else if (id === '804') this.icon = dirIcon + 'cloudy-4.svg';
         }
         return this.icon;
     }
@@ -216,10 +212,10 @@ class DayWeather {
 function getDayWeatherHourlyForecast(weatherForecast, daysWeatherObjArray) {
     let enteredDay = setCurrentDate(weatherForecast).getDate();
     let historyForecast = weatherForecast.list;
-    const {city} = weatherForecast;
+    const { city } = weatherForecast;
     let objCounter = 0;
 
-    for (let i=objCounter; i<historyForecast.length; i++) {
+    for (let i = objCounter; i < historyForecast.length; i++) {
         let daysWeatherWithSameDate = [];
         let isSameDay = true;
 
@@ -228,9 +224,9 @@ function getDayWeatherHourlyForecast(weatherForecast, daysWeatherObjArray) {
             let dateWeather = currentWeather.dt_txt;
             let dayNumWeatherIndex = new Date(dateWeather).getDate();
 
-            if (objCounter === historyForecast.length-1) {
+            if (objCounter === historyForecast.length - 1) {
                 break;
-            } 
+            }
             else if (dayNumWeatherIndex !== enteredDay) {
                 isSameDay = false;
                 enteredDay = dayNumWeatherIndex;
@@ -240,7 +236,7 @@ function getDayWeatherHourlyForecast(weatherForecast, daysWeatherObjArray) {
                 objCounter++;
             }
         }
-        if (objCounter < historyForecast.length-1) {
+        if (objCounter < historyForecast.length - 1) {
             let hourlyWeatherArray = new DayWeatherHourlyForecast(daysWeatherWithSameDate);
             daysWeatherObjArray.push(hourlyWeatherArray);
         }
@@ -257,24 +253,24 @@ function convertOpenWeatherObjectToDayWeatherObject(openWeatherObjects, cityList
     let hour = formatHourToDisplay(formattedDate);
     let city = cityListInfo.name;
     let country = cityListInfo.country;
-    let {pressure} = mainInfo;
-    let {humidity} = mainInfo;
-    let {speed} = openWeatherObjects.wind;
-    let {temp} = mainInfo;
-    let {id} = openWeatherObjects.weather[0];
+    let { pressure } = mainInfo;
+    let { humidity } = mainInfo;
+    let { speed } = openWeatherObjects.wind;
+    let { temp } = mainInfo;
+    let { id } = openWeatherObjects.weather[0];
     let dayName = convertDayNumToDayName(currentDayNum);
-    let newDayWeather = new DayWeather(dayName,formattedDate,hour,city,country,pressure,humidity,speed,temp,id);
+    let newDayWeather = new DayWeather(dayName, formattedDate, hour, city, country, pressure, humidity, speed, temp, id);
 
     return newDayWeather;
 }
 
 function convertDayNumToDayName(dayNum) {
-    switch(dayNum) {
+    switch (dayNum) {
         case 0:
             return 'Niedziela';
-        case 1: 
+        case 1:
             return 'Poniedziałek';
-        case 2: 
+        case 2:
             return 'Wtorek';
         case 3:
             return 'Środa';
@@ -302,7 +298,7 @@ function getMinTemp(dailyHourlyForecastArray) {
 
 function getTempArr(dailyHourlyForecastArray) {
     let tempArray = [];
-    for (let i=0; i<dailyHourlyForecastArray.length; i++) {
+    for (let i = 0; i < dailyHourlyForecastArray.length; i++) {
         let currentWeather = dailyHourlyForecastArray[i];
         tempArray.push(currentWeather.temp);
     }
@@ -312,7 +308,7 @@ function getTempArr(dailyHourlyForecastArray) {
 //TIME FUNCTIONS
 function setCurrentDate(weatherForecast) {
     let currentWeather = weatherForecast.list[0];
-    let {dt_txt} = currentWeather;
+    let { dt_txt } = currentWeather;
     const currentDate = new Date(dt_txt);
     return currentDate;
 }
@@ -344,7 +340,7 @@ function formatHourToDisplay(date) {
 
 
 //SHOW ADDING FORM
-btnShowForm.addEventListener('click', function() {
+btnShowForm.addEventListener('click', function () {
     showAddForm();
 })
 
@@ -356,17 +352,19 @@ function showAddForm() {
     let isHidden = addForm.hasAttribute('hidden');
     if (isHidden) addForm.removeAttribute('hidden');
     else addForm.setAttribute('hidden', true);
+    cityNameInput.focus();
 }
 
 //CLOSE ADDING FORM
-$btnFormClose.addEventListener('click', function() {
+$btnFormClose.addEventListener('click', function () {
     showAddForm();
 })
 
 //ADDING THE NEW MODULE
 function getWeatherByCityName(cityName) {
-    $body.className += 'loading';
-    weather.getWeekForecastByCityName(cityName, (weatherForecast, error)=> {
+    // $body.className += 'loading';
+    $body.classList.add('loading');
+    weather.getWeekForecastByCityName(cityName, (weatherForecast, error) => {
         if (error.status !== '200') {
             console.error(error.status);
             setNotFoundError();
@@ -389,14 +387,14 @@ function getWeatherByCityName(cityName) {
             manageHourlyWeather(daysWeatherObjArray, counter)
             showAddForm();
             showModule();
+
+            $body.classList.remove('loading');
         }
-        $body.classList.remove('loading');
     })
-    loadingPage();
 };
 
 const form = document.querySelector('.find-city');
-form.addEventListener('submit', function() {
+form.addEventListener('submit', function () {
     event.preventDefault();
     let city = cityNameInput.value;
     if (validate(city)) {
@@ -429,8 +427,8 @@ function setNotFoundError() {
 }
 
 //REMOVE MODULE
-$btnClose.addEventListener("click", function() {
-    this.parentElement.setAttribute('hidden',true);
+$btnClose.addEventListener("click", function () {
+    this.parentElement.setAttribute('hidden', true);
 })
 
 //SHOW SELECTED DAY DETAILS
@@ -440,13 +438,13 @@ function manageHourlyWeather(daysWeatherObjArray, counter) {
     function setArrows() {
         let selectedDaysWeather = findHourlyForecastByDayName($dayName.innerHTML);
         let date = selectedDaysWeather[0].date;
-        counter = getIndexOfDailyHourlyWeatherArrayByDate(date,selectedDaysWeather);
+        counter = getIndexOfDailyHourlyWeatherArrayByDate(date, selectedDaysWeather);
         manageLeftArrow(counter);
-        manageRightArrow(counter,selectedDaysWeather);
+        manageRightArrow(counter, selectedDaysWeather);
     }
 
     $daysContent.forEach(day => {
-        day.addEventListener('click', function() {
+        day.addEventListener('click', function () {
             let dayName = day.firstElementChild.innerText;
             let selectedDaysWeather = findHourlyForecastByDayName(dayName)
             setMainWeatherModule(selectedDaysWeather);
@@ -457,16 +455,16 @@ function manageHourlyWeather(daysWeatherObjArray, counter) {
     function findHourlyForecastByDayName(enteredDayName) {
         const daysWeatherArray = [];
         let daysArrayByDayName;
-        for (let index=0; index<daysWeatherObjArray.length; index++) {
+        for (let index = 0; index < daysWeatherObjArray.length; index++) {
             daysArrayByDayName = daysWeatherObjArray[index].dailyHourlyForecastArray;
             if (daysArrayByDayName[index].day === enteredDayName) {
-                for (let j=0; j<daysArrayByDayName.length; j++) {
+                for (let j = 0; j < daysArrayByDayName.length; j++) {
                     let currentWeather = daysArrayByDayName[j];
                     daysWeatherArray.push(currentWeather);
                 }
                 break;
             }
-        } 
+        }
         return daysWeatherArray;
     }
 
@@ -474,20 +472,20 @@ function manageHourlyWeather(daysWeatherObjArray, counter) {
         let selectedDaysWeather = findHourlyForecastByDayName($dayName.innerHTML);
         if (counter > 0) {
             --counter;
-            setMainHTMLTags(selectedDaysWeather,selectedDaysWeather[counter])
+            setMainHTMLTags(selectedDaysWeather, selectedDaysWeather[counter])
         }
         manageLeftArrow(counter);
-        manageRightArrow(counter,selectedDaysWeather);
+        manageRightArrow(counter, selectedDaysWeather);
     });
 
     $rigthArrow.addEventListener('click', () => {
         let selectedDaysWeather = findHourlyForecastByDayName($dayName.innerHTML);
-        if (counter < selectedDaysWeather.length-1) {
+        if (counter < selectedDaysWeather.length - 1) {
             ++counter;
             manageLeftArrow(counter);
         }
-        manageRightArrow(counter,selectedDaysWeather);
-        setMainHTMLTags(selectedDaysWeather,selectedDaysWeather[counter])
+        manageRightArrow(counter, selectedDaysWeather);
+        setMainHTMLTags(selectedDaysWeather, selectedDaysWeather[counter])
     })
 
     function manageLeftArrow(counter) {
@@ -501,7 +499,7 @@ function manageHourlyWeather(daysWeatherObjArray, counter) {
 
     function manageRightArrow(counter, selectedDaysWeather) {
         const $rigthArrow = document.querySelector('.right__arrow');
-        if (counter === selectedDaysWeather.length-1) { 
+        if (counter === selectedDaysWeather.length - 1) {
             $rigthArrow.setAttribute('hidden', true);
         } else {
             $rigthArrow.removeAttribute('hidden');
@@ -509,10 +507,10 @@ function manageHourlyWeather(daysWeatherObjArray, counter) {
     }
 
     function getIndexOfDailyHourlyWeatherArrayByDate(date, dayWeatherHourlyArray) {
-        for (let index=0; index<dayWeatherHourlyArray.length; index++) {
+        for (let index = 0; index < dayWeatherHourlyArray.length; index++) {
             let currentWeather = dayWeatherHourlyArray[index];
             let dateOfDayWeather = currentWeather.date;
-            if(dateOfDayWeather === date) {
+            if (dateOfDayWeather === date) {
                 return index;
             }
         }
