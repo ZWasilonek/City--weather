@@ -1,5 +1,5 @@
 import {OpenWeatherMap} from './open-weather.js';
-import {getCountryName} from './countryCodes.js';
+import {getCountryName} from './country-codes.js';
 
 const $body = document.querySelector('body');
 const $btnClose = document.querySelector('.btn-remove-module');
@@ -27,8 +27,6 @@ const $maxTemp = document.querySelector('.max__temp');
 //FORECAST WEATHER MODULE SECTION
 const $daysContent = document.querySelectorAll('.day-content');
 
-// / const daysWeatherObjArray = [];
-// // const dailyForecastFor5Day = [];/
 let counter;
 
 (async () => { 
@@ -148,7 +146,6 @@ function getDayWeatherByDateAndHour(date, hour, dayWeatherHourlyArray) {
     }
 }
 
-//OBJECTS
 class DayWeatherHourlyForecast {
     constructor(dailyHourlyForecastArray) {
         this.dailyHourlyForecastArray = dailyHourlyForecastArray;
@@ -214,7 +211,6 @@ class DayWeather {
     isItNight() {
         return this.hour === '00:00' || this.hour === '03:00' || this.hour === '21:00';
     }
-    // https://openweathermap.org/weather-conditions
 }
 
 function getDayWeatherHourlyForecast(weatherForecast, daysWeatherObjArray) {
