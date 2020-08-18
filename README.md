@@ -27,7 +27,7 @@ OW_API_KEY =
 
 Zainstaluje potrzebne zależności
 
-### `npm run build | npm start`
+### `npm start`
 
 Uruchamia aplikację lokalnie<br />
 Otwórz [http://localhost:5000](http://localhost:5000) aby zobaczyć rezultat w przeglądarce.
