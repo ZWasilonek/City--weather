@@ -33,5 +33,5 @@ Uruchamia aplikację lokalnie<br />
 Otwórz [http://localhost:5000](http://localhost:5000) aby zobaczyć rezultat w przeglądarce.
 
 ## Kontakt 
-zofiawasilonek@.gmail.com<br>
+zofiawasilonek@gmail.com<br>
 <a href="https://www.linkedin.com/in/zofia-wasilonek/">Linkedin</a>
