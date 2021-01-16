@@ -264,3 +264,7 @@ form.find-city button{
   padding-left: 7px;
   border-left:1px solid #e9e9e9;
 }
+#fetching-error {
+  margin: 20% auto;
+  color: red;
+}
