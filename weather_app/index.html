@@ -1,112 +1,122 @@
 <!DOCTYPE html>
 <html lang="pl">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
   <title>Weather App</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body class="loading">
-<header>
-  <div class="container">
-    <div class="logo"><img src="images/icons/logo.svg"/> Weather App</div>
-    <button class="btn" id="add-city">Dodaj miasto <i class="material-icons">add_circle</i></button>
-  </div>
-</header>
-
-<section id="app" class="container">
-
-  <div class="module module__form" hidden>
-    <button class="btn btn--icon btn--close btn-add-weather-module"><i class="material-icons">close</i></button>
-    <h2>Znajdź miasto</h2>
-
-    <form novalidate autocomplete="off" class="find-city">
-      <input type="text" name="search" id="search" placeholder="np. Wrocław"/>
-      <button type="submit"><i class="material-icons">search</i></button>
-    </form>
-    <div class="search-error"></div>
-  </div>
-
-  <div class="module module__weather" hidden>
-    <button class="btn btn--icon btn--close btn-remove-module"><i class="material-icons">close</i></button>
-
-    <div class="weather">
-
-      <div class="main-weather">
-        <div><span class="country">Polska</span><span class="hour">15:00</span></div>
-        <div class="main-weather-details">
-          <div class="left__arrow"><img src="images/icons/arr-left.png" width="30px" style="margin-left: -150px"></div>
-
-          <div class="left-info">
-            <div class="weather__icon"><img src="images/icons/clear-day.svg"></div>
-
-            <div class="weather__info">
-              <div class="city">
-                <span class="city__name main-info">Wrocław</span><br>
-                <span class="day__name">Poniedziałek</span>
-              </div>
-              <div class="temperature"><span class="temperature__value">16.5</span>&deg;C</div>
-            </div>
-          </div>
-
-          <div>
-            <ul class="weather__details">
-              <li><img src="images/icons/pressure.svg"/> <span class="pressure__value">998</span><span class="main-info">&nbsp;hPa</span></li>
-              <li><img src="images/icons/humidity.svg"/> <span class="humidity__value">45</span><span class="main-info">&nbsp;%</span></li>
-              <li><img src="images/icons/wind-speed.svg"/> <span class="wind-speed__value">5.5</span><span class="main-info">&nbsp;m/s</span></li>
-            </ul>
-          </div>
-
-          <div class="temp-amb">
-            <div class="temp-info">
-              <img src="images/icons/cold.svg" width="50px" height="70px"/>
-              <span><span class="min__temp"></span>&deg;C</span>
-            </div>
-            <div class="temp-info temp-max">
-              <img src="images/icons/hot.svg" width="50px" height="70px"/>
-              <span><span class="max__temp"></span>&deg;C</span>
-            </div>
-          </div>
-
-          <div class="right__arrow"><img src="images/icons/arr-right.png" width="30px" style="margin-right: -90px;"></div>
-        </div>
-      </div>
-
-      <ul class="weather__forecast">
-        <li class ="day-content">
-          <span class="day">Poniedziałek</span> <img src="images/icons/clear-day.svg"/>
-          <span class="temperature"><span class="temperature__value">10.0</span>&deg;C</span>
-        </li>
-
-        <li class="day-content">
-          <span class="day">Wtorek</span> <img src="images/icons/cloudy-4.svg"/>
-          <span class="temperature"><span class="temperature__value">-2.3</span>&deg;C</span>
-        </li>
-
-        <li class="day-content">
-          <span class="day">Środa</span> <img src="images/icons/rainy-1.svg"/>
-          <span class="temperature"><span class="temperature__value">4.8</span>&deg;C</span>
-        </li>
-
-        <li class="day-content">
-          <span class="day">Czwartek</span> <img src="images/icons/fog.svg"/>
-          <span class="temperature"><span class="temperature__value">5.0</span>&deg;C</span>
-        </li>
-
-        <li class="day-content">
-          <span class="day">Piątek</span> <img src="images/icons/hail.svg"/>
-          <span class="temperature"><span class="temperature__value">8.6</span>&deg;C</span>
-        </li>
-      </ul>
+  <header>
+    <div class="container">
+      <div class="logo"><img src="images/icons/logo.svg" /> Weather App</div>
+      <button class="btn" id="add-city">Dodaj miasto <i class="material-icons">add_circle</i></button>
     </div>
+  </header>
+
+  <section id="app" class="container">
+
+    <h3 id="fetching-error" hidden></h3>
+    <div class="module module__form" hidden>
+      <button class="btn btn--icon btn--close btn-add-weather-module"><i class="material-icons">close</i></button>
+      <h2>Znajdź miasto</h2>
+
+      <form novalidate autocomplete="off" class="find-city">
+        <input type="text" name="search" id="search" placeholder="np. Wrocław" />
+        <button type="submit"><i class="material-icons">search</i></button>
+      </form>
+      <div class="search-error"></div>
+    </div>
+
+    <div class="module module__weather" hidden>
+      <button class="btn btn--icon btn--close btn-remove-module"><i class="material-icons">close</i></button>
+
+      <div class="weather">
+
+        <div class="main-weather">
+          <div><span class="country">Polska</span><span class="hour">15:00</span></div>
+          <div class="main-weather-details">
+            <div class="left__arrow"><img src="images/icons/arr-left.png" width="30px" style="margin-left: -150px">
+            </div>
+
+            <div class="left-info">
+              <div class="weather__icon"><img src="images/icons/clear-day.svg"></div>
+
+              <div class="weather__info">
+                <div class="city">
+                  <span class="city__name main-info">Wrocław</span><br>
+                  <span class="day__name">Poniedziałek</span>
+                </div>
+                <div class="temperature"><span class="temperature__value">16.5</span>&deg;C</div>
+              </div>
+            </div>
+
+            <div>
+              <ul class="weather__details">
+                <li><img src="images/icons/pressure.svg" /> <span class="pressure__value">998</span><span
+                    class="main-info">hPa</span></li>
+                <li><img src="images/icons/humidity.svg" /> <span class="humidity__value">45</span><span
+                    class="main-info">%</span></li>
+                <li><img src="images/icons/wind-speed.svg" /> <span class="wind-speed__value">5.5</span><span
+                    class="main-info">m/s</span></li>
+              </ul>
+            </div>
+
+            <div class="temp-amb">
+              <div class="temp-info">
+                <img src="images/icons/cold.svg" width="50px" height="70px" />
+                <span><span class="min__temp"></span>&deg;C</span>
+              </div>
+              <div class="temp-info temp-max">
+                <img src="images/icons/hot.svg" width="50px" height="70px" />
+                <span><span class="max__temp"></span>&deg;C</span>
+              </div>
+            </div>
+
+            <div class="right__arrow"><img src="images/icons/arr-right.png" width="30px" style="margin-right: -90px;">
+            </div>
+          </div>
+        </div>
+
+        <ul class="weather__forecast">
+          <li class="day-content">
+            <span class="day">Poniedziałek</span> <img src="images/icons/clear-day.svg" />
+            <span class="temperature"><span class="temperature__value">10.0</span>&deg;C</span>
+          </li>
+
+          <li class="day-content">
+            <span class="day">Wtorek</span> <img src="images/icons/cloudy-4.svg" />
+            <span class="temperature"><span class="temperature__value">-2.3</span>&deg;C</span>
+          </li>
+
+          <li class="day-content">
+            <span class="day">Środa</span> <img src="images/icons/rainy-1.svg" />
+            <span class="temperature"><span class="temperature__value">4.8</span>&deg;C</span>
+          </li>
+
+          <li class="day-content">
+            <span class="day">Czwartek</span> <img src="images/icons/fog.svg" />
+            <span class="temperature"><span class="temperature__value">5.0</span>&deg;C</span>
+          </li>
+
+          <li class="day-content">
+            <span class="day">Piątek</span> <img src="images/icons/hail.svg" />
+            <span class="temperature"><span class="temperature__value">8.6</span>&deg;C</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="loading">
+    <div class="dual-ring"></div>
   </div>
-</section>
 
-<div class="loading">
-  <div class="dual-ring"></div>
-</div>
-
-<script src="build/out.js"></script>
+  <script src="build/out.js"></script>
 </body>
+
 </html>
