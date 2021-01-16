@@ -102,7 +102,7 @@ function setMainHTMLTags(daysWeatherForecastArr, selectedHourWeather) {
 
 function setForcastForNextDays(weatherDaysArray) {
     function setModuleItem(items) {
-        for (let i = 0; i < items.length; i++) {
+        for (let i = 0; i < weatherDaysArray.length; i++) {
             let item = items[i];
             item.querySelector('.day').innerHTML = weatherDaysArray[i].day;
             item.querySelector('img').src = weatherDaysArray[i].icon;
