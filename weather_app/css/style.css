@@ -151,6 +151,9 @@ header .logo img{
   margin-right:25px;
   padding-right:25px;
 }
+.weather__details .main-info {
+  marfin: 20% auto; 
+}
 .main-weather{
   text-align: center;
   width: 80%;
