@@ -10,6 +10,7 @@ function sendResponse(data, err, callback){
 		if(typeof data !== 'undefined'){
 			error = new Error(data);
 			error.status = data.cod;
+			error.message = data.message;
 		} 
 	}
 	callback(data, error);
